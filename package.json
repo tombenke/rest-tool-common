@@ -21,5 +21,10 @@
   },
   "bin": {},
   "main": "index",
-  "dependencies": {}
+  "dependencies": {
+    "js-yaml": "2.1.0",
+    "mu2": "0.5.20",
+    "should": "2.0.2",
+    "wrench": "1.5.6"
+  }
 }
