@@ -56,6 +56,7 @@ definitions:
     method:
         description: Specification of one method
         type: object
+        required: [summary, notes, request, responses, testCases]
         properties:
             summary:
                 description: Short summary of the service method
@@ -79,6 +80,19 @@ definitions:
     request:
         description: Specification of the request
         type: object
+        required: [parameters, cookies, headers]
+        properties:
+            parameters:
+                $ref: "#/definitions/requestParameters"
+            cookies:
+                $ref: "#/definitions/cookies"
+            headers:
+                $ref: "#/definitions/headers"
+
+    testCaseRequest:
+        description: Specification of the test case request
+        type: object
+        required: [cookies, headers]
         properties:
             parameters:
                 $ref: "#/definitions/requestParameters"
@@ -96,7 +110,7 @@ definitions:
     requestParameter:
         description: Specification of one request parameter
         type: object
-        required: [field, content]
+        required: [name, kind, type, required, summary]
         additionalProperties: false
         properties:
             name:
@@ -107,7 +121,7 @@ definitions:
                 enum: [URL, QUERY, BODY]
             required:
                 description: Tells if the parameter is mandatory
-                type: bool
+                type: boolean
             type:
                 description: Defines the type of the paramater
                 enum: [string, number, boolean, object]
@@ -116,7 +130,11 @@ definitions:
                 type: string
             default:
                 description: Default value of the parameter
-                type: string
+                anyOf: 
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: object
 
     cookies:
         description: Specification of the cookies
@@ -161,6 +179,7 @@ definitions:
     response:
         description: Specification of one response
         type: object
+        required: [name, statusCode, reason, cookies, headers]
         properties:
             name:
                 description: |
@@ -194,6 +213,7 @@ definitions:
     testCase:
         description: Specification of one test case
         type: object
+        required: [name, description, url, template, request, response]
         properties:
             name:
                 description: The name of the test case
@@ -211,7 +231,7 @@ definitions:
                 type: string
             request:
                 description: The specification of the cookies belong to the request of the test case
-                $ref: "#/definitions/request"
+                $ref: "#/definitions/testCaseRequest"
             response:
                 description: The specification of the cookies belong to the response of the test case
                 $ref: "#/definitions/response"

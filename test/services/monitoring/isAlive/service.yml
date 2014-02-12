@@ -9,7 +9,7 @@ methods:
     GET:
         summary: Is server alive?
         notes: Responses true if server is working
-        implementation: monitoring.isAlive
+        # implementation: monitoring.isAlive
         request:
             parameters: []
             cookies: []
@@ -23,9 +23,9 @@ methods:
         responses:
             -
                 name: OK
-                statusCode: 200
-                reason: Successful execution
-                validationSchema: getMonitoringIsAlive-responseBody-validationSchema.json
+                statusCode: &OkStatusCode 200
+                reason: &OkReason Successful execution
+                # validationSchema: getMonitoringIsAlive-responseBody-validationSchema.json
                 cookies: []
                 headers:
                     -
@@ -34,7 +34,7 @@ methods:
                     -
                         field: X-Application-API-Version
                         content: v0.0.0
-                mockBody: getMonitoringIsAlive-responseBody.json
+                # mockBody: getMonitoringIsAlive-responseBody.json
         testCases:
             -
                 name: Get Monitoring Is Alive
@@ -51,7 +51,9 @@ methods:
                             field: Accept-Encoding
                             content: "gzip, deflate"
                 response:
-                    statusCode: 200
+                    name: OK
+                    statusCode: *OkStatusCode
+                    reason: *OkReason
                     cookies: []
                     headers:
                         -
@@ -60,4 +62,4 @@ methods:
                         -
                             field: X-Application-API-Version
                             content: v0.0.0
-                    validationSchema: getMonitoringIsAlive-responseBody-validationSchema.json
+                    # validationSchema: getMonitoringIsAlive-responseBody-validationSchema.json
