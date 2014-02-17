@@ -10,7 +10,7 @@ describe('Services', function() {
 
         services.load(__dirname + '/services' );
         var allServices = services.getServices();
-        console.log('allServices:', allServices);
+        // console.log('allServices:', allServices);
         allServices.should.be.instanceof(Object);
 
         var JaySchema = require('jayschema');

@@ -5,7 +5,7 @@ urlPattern: /customers/{id}
 methods:
     GET:
         summary: Get one customer
-        notes: Get one customer
+        notes: 
         implementation: api.getCustomer
         request:
             parameters: []

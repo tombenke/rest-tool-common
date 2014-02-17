@@ -56,14 +56,14 @@ definitions:
     method:
         description: Specification of one method
         type: object
-        required: [summary, notes, request, responses, testCases]
+        required: [summary, request, responses, testCases]
         properties:
             summary:
                 description: Short summary of the service method
                 type: string
             notes:
                 description: Details and notes about the method
-                type: string
+                type: [string, "null"]
             implementation:
                 description: "The implementation of the call in the following format: <module>.<function> (optional)"
                 type: string
@@ -135,6 +135,7 @@ definitions:
                     - type: number
                     - type: boolean
                     - type: object
+                    - type: "null"
 
     cookies:
         description: Specification of the cookies
@@ -204,6 +205,28 @@ definitions:
                     The path to the file which contain the mock response body.
                     For example: getMonitoringIsAlive-responseBody.json
 
+    testCaseResponse:
+        description: Specification of one response
+        type: object
+        required: [statusCode, cookies, headers]
+        properties:
+            statusCode:
+                description: The status code of the response
+            validationSchema:
+                description: |
+                    The JSON-schema to validate the content of the response
+                    for example: getMonitoringIsAlive-responseBody-validationSchema.json
+            cookies:
+                description: The definitions of the response cookies
+                $ref: "#/definitions/cookies"
+            headers:
+                description: The definitions of the response headers
+                $ref: "#/definitions/headers"
+            mockBody:
+                description: |
+                    The path to the file which contain the mock response body.
+                    For example: getMonitoringIsAlive-responseBody.json
+
     testCases:
         description: Specification of the test cases
         type: array
@@ -234,4 +257,4 @@ definitions:
                 $ref: "#/definitions/testCaseRequest"
             response:
                 description: The specification of the cookies belong to the response of the test case
-                $ref: "#/definitions/response"
+                $ref: "#/definitions/testCaseResponse"
