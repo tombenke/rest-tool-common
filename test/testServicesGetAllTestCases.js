@@ -1,9 +1,38 @@
 /*jshint node: true */
 'use strict';
 
-var should = require('should'),
+var fs = require('fs'),
+    should = require('should'),
     mocha = require('mocha'),
-    validate = require('./validator.js').Validator();
+    schemas = require('../lib/schemas.js');
+
+/**
+ * Validate the testCase object
+ * @param  {Object} testCase  The testCase object to validate
+ * @return {Boolean}          true if successfully validated, false otherwise
+ */
+var validateTestCase = function (testCase) {
+    // Validate service
+    testCase.should.have.property('service');
+    testCase.service.should.be.instanceof(Object);
+    testCase.service.should.have.property('name');
+    testCase.service.should.have.property('description');
+    testCase.service.should.have.property('urlPattern');
+    testCase.service.should.have.property('style');
+    testCase.service.style.should.match(/OPERATION|RESOURCE/);
+
+    // Validate method
+    testCase.should.have.property('method');
+    testCase.method.should.match(/GET|PUT|POST|DELETE/);
+
+    // Validate testCase
+    testCase.should.have.property('testCase');
+    testCase.testCase.should.be.instanceof(Object);
+    schemas.validate(testCase.testCase, 'testCaseSchema.yml');
+
+    return true;
+};
+
 
 describe('Services', function() {
 
@@ -16,7 +45,7 @@ describe('Services', function() {
         // Validate each test-cases
         allTestCases.should.be.instanceof(Array);
         allTestCases.forEach(function(testCase) {
-            validate.testCase(testCase);
+            validateTestCase(testCase);
         });
 
         done();

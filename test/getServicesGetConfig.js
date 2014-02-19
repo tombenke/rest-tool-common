@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+/*jshint node: true */
+'use strict';
+
 var fs = require('fs'),
-    jsyaml = require('js-yaml'),
-    JaySchema = require('jayschema'),
+    schemas = require('../lib/schemas.js'),
     should = require('should'),
     mocha = require('mocha');
 
@@ -13,14 +16,9 @@ describe('Services', function() {
         var allServices = services.getServices();
         var servicesConfig = services.getConfig();
 
-        // Validate whether the structure confonrms to the schema
-        var js = new JaySchema();
-        var schema = jsyaml.load(fs.readFileSync('schemas/serviceConfigSchema.yml','utf-8'));
-
-        var errors = js.validate(servicesConfig, schema);
-        // });
-
-        if (errors.length > 0) {
+        // Validate whether the structure conforms to the schema
+        var errors = schemas.validate(servicesConfig, 'serviceConfigSchema.yml');
+        if (errors.length > 0 ) {
             errors.forEach(function(error) {
                 console.log(JSON.stringify(error, null, '  '));
             });

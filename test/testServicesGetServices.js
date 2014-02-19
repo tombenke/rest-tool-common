@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+/*jshint node: true */
+'use strict';
+
 var fs = require('fs'),
-    jsyaml = require('js-yaml'),
-    should = require('should'),
+    schemas = require('../lib/schemas.js'),
     mocha = require('mocha');
 
 describe('Services', function() {
@@ -10,25 +13,24 @@ describe('Services', function() {
 
         services.load(__dirname + '/services' );
         var allServices = services.getServices();
-        // console.log('allServices:', allServices);
         allServices.should.be.instanceof(Object);
 
-        var JaySchema = require('jayschema');
-        var js = new JaySchema();
-        var schema = jsyaml.load(fs.readFileSync('schemas/serviceSchema.yml','utf-8'));
-        var errors = [];
+        var validationError = false;
 
         for (var s in allServices ) {
             var service = allServices[s];
-            errors = js.validate(service, schema);
+            var errors = schemas.validate(service, 'serviceSchema.yml');
             if (errors.length > 0) {
                 errors.forEach(function(error) {
                     console.log(JSON.stringify(error, null, '  '));
+                    validationError = true;
                 });
-                done('Validation error');
             }
         }
 
+        if (validationError) {
+            done('Validation error');
+        }
         done();
     });
 });

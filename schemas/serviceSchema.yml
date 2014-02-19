@@ -83,93 +83,11 @@ definitions:
         required: [parameters, cookies, headers]
         properties:
             parameters:
-                $ref: "#/definitions/requestParameters"
+                $ref: "http://tombenke.github.io/rest-tool-common/schemas/requestParametersSchema.yml#requestParameters"
             cookies:
-                $ref: "#/definitions/cookies"
+                $ref: "http://tombenke.github.io/rest-tool-common/schemas/cookiesSchema.yml#cookies"
             headers:
-                $ref: "#/definitions/headers"
-
-    testCaseRequest:
-        description: Specification of the test case request
-        type: object
-        required: [cookies, headers]
-        properties:
-            parameters:
-                $ref: "#/definitions/requestParameters"
-            cookies:
-                $ref: "#/definitions/cookies"
-            headers:
-                $ref: "#/definitions/headers"
-
-    requestParameters:
-        description: Specification of the request parameters
-        type: array
-        items:
-            $ref: "#/definitions/requestParameter"
-
-    requestParameter:
-        description: Specification of one request parameter
-        type: object
-        required: [name, kind, type, required, summary]
-        additionalProperties: false
-        properties:
-            name:
-                description: The name of the parameter
-                type: string
-            kind:
-                description: The type of the parameter
-                enum: [URL, QUERY, BODY]
-            required:
-                description: Tells if the parameter is mandatory
-                type: boolean
-            type:
-                description: Defines the type of the paramater
-                enum: [string, number, boolean, object]
-            summary:
-                description: Short summary of the parameter
-                type: string
-            default:
-                description: Default value of the parameter
-                anyOf: 
-                    - type: string
-                    - type: number
-                    - type: boolean
-                    - type: object
-                    - type: "null"
-
-    cookies:
-        description: Specification of the cookies
-        type: array
-        items:
-            $ref: "#/definitions/cookie"
-
-    cookie:
-        description: Specification of one cookie
-        type: object
-        required: [field, content]
-        additionalProperties: false
-        properties:
-            field:
-                type: string
-            content:
-                type: string
-
-    headers:
-        description: Specification of the headers
-        type: array
-        items:
-            $ref: "#/definitions/header"
-
-    header:
-        description: Specification of one header
-        type: object
-        required: [field, content]
-        additionalProperties: false
-        properties:
-            field:
-                type: string
-            content:
-                type: string
+                $ref: "http://tombenke.github.io/rest-tool-common/schemas/headersSchema.yml#headers"
 
     responses:
         description: Specification of the responses
@@ -196,32 +114,10 @@ definitions:
                     for example: getMonitoringIsAlive-responseBody-validationSchema.json
             cookies:
                 description: The definitions of the response cookies
-                $ref: "#/definitions/cookies"
+                $ref: "http://tombenke.github.io/rest-tool-common/schemas/cookiesSchema.yml#cookies"
             headers:
                 description: The definitions of the response headers
-                $ref: "#/definitions/headers"
-            mockBody:
-                description: |
-                    The path to the file which contain the mock response body.
-                    For example: getMonitoringIsAlive-responseBody.json
-
-    testCaseResponse:
-        description: Specification of one response
-        type: object
-        required: [statusCode, cookies, headers]
-        properties:
-            statusCode:
-                description: The status code of the response
-            validationSchema:
-                description: |
-                    The JSON-schema to validate the content of the response
-                    for example: getMonitoringIsAlive-responseBody-validationSchema.json
-            cookies:
-                description: The definitions of the response cookies
-                $ref: "#/definitions/cookies"
-            headers:
-                description: The definitions of the response headers
-                $ref: "#/definitions/headers"
+                $ref: "http://tombenke.github.io/rest-tool-common/schemas/headersSchema.yml#headers"
             mockBody:
                 description: |
                     The path to the file which contain the mock response body.
@@ -231,30 +127,4 @@ definitions:
         description: Specification of the test cases
         type: array
         items:
-            $ref: "#/definitions/testCase"
-
-    testCase:
-        description: Specification of one test case
-        type: object
-        required: [name, description, url, template, request, response]
-        properties:
-            name:
-                description: The name of the test case
-                type: string
-            description:
-                description: The description of the test case
-                type: string
-            url:
-                description: The URL of the test case
-                type: string
-            template:
-                description: |
-                    The path to the template which is used to generate the test case
-                    for example: testGetMethod.mustache
-                type: string
-            request:
-                description: The specification of the cookies belong to the request of the test case
-                $ref: "#/definitions/testCaseRequest"
-            response:
-                description: The specification of the cookies belong to the response of the test case
-                $ref: "#/definitions/testCaseResponse"
+            $ref: "http://tombenke.github.io/rest-tool-common/schemas/testCaseSchema.yml#testCase"
