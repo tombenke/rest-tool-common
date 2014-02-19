@@ -39,15 +39,18 @@ describe('Services', function() {
     it('#getAllTestCases()', function(done) {
         var services = require('../lib/services.js');
 
-        services.load(__dirname + '/services' );
-        var allTestCases = services.getAllTestCases();
+        if (services.load(__dirname + '/services' ) === null ) {
+            done('ERROR: services.load unsuccessful.');
+        } else {
+            var allTestCases = services.getAllTestCases();
 
-        // Validate each test-cases
-        allTestCases.should.be.instanceof(Array);
-        allTestCases.forEach(function(testCase) {
-            validateTestCase(testCase);
-        });
+            // Validate each test-cases
+            allTestCases.should.be.instanceof(Array);
+            allTestCases.forEach(function(testCase) {
+                validateTestCase(testCase);
+            });
 
-        done();
+            done();
+        }
     });
 });

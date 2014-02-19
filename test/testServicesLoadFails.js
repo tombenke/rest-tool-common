@@ -7,13 +7,13 @@ var should = require('should'),
 
 describe('Services', function() {
 
-    it('#load()', function(done) {
+    it('#loadFails()', function(done) {
         var services = require('../lib/services.js');
 
-        if (services.load(__dirname + '/services' ) === null ) {
-            done('ERROR: services.load unsuccessful.');
-        } else {
+        if (services.load(__dirname + '/srvcs' ) === null ) {
             done();
+        } else {
+            done('services.load() should not return with non-null value.');
         }
     });
 });
