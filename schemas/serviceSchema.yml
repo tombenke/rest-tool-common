@@ -26,7 +26,7 @@ definitions:
                     Tells whether it is an RPC-like OPERATION,
                     or a RESOURCE, which fully comply to the REST principles
                 type: string
-                enum: [OPERATION, RESOURCE]
+                enum: [OPERATION, COLLECTION, RESOURCE]
             methods:
                 $ref: "#/definitions/methods"
 
