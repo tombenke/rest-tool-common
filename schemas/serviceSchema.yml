@@ -82,6 +82,9 @@ definitions:
         type: object
         required: [parameters, cookies, headers]
         properties:
+            description:
+                description: Details and notes about the request
+                type: [string, "null"]
             parameters:
                 $ref: "http://tombenke.github.io/rest-tool-common/schemas/requestParametersSchema.yml#requestParameters"
             cookies:
@@ -108,6 +111,9 @@ definitions:
                 description: The status code of the response
             reason:
                 description: The reason of the status code
+            description:
+                description: Details and notes about the response
+                type: [string, "null"]
             validationSchema:
                 description: |
                     The JSON-schema to validate the content of the response

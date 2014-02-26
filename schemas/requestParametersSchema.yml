@@ -30,7 +30,7 @@ definitions:
                 type: boolean
             type:
                 description: Defines the type of the paramater
-                enum: [string, number, boolean, object]
+                enum: [string, number, boolean, object, array]
             summary:
                 description: Short summary of the parameter
                 type: string
