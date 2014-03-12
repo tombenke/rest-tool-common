@@ -27,10 +27,10 @@ definitions:
                     for example: testGetMethod.mustache
                 type: string
             request:
-                description: The specification of the cookies belong to the request of the test case
+                description: The specification of the request of the test case
                 $ref: "#/definitions/testCaseRequest"
             response:
-                description: The specification of the cookies belong to the response of the test case
+                description: The specification of the response of the test case
                 $ref: "#/definitions/testCaseResponse"
 
     testCaseRequest:
@@ -44,6 +44,10 @@ definitions:
                 $ref: "http://tombenke.github.io/rest-tool-common/schemas/cookiesSchema.yml#cookies"
             headers:
                 $ref: "http://tombenke.github.io/rest-tool-common/schemas/headersSchema.yml#headers"
+            mockBody:
+                description: |
+                    The path to the file which contain the mock request body.
+                    For example: postOperation-requestBody.json
 
     testCaseResponse:
         description: Specification of one response

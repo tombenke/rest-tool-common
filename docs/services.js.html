@@ -65,11 +65,13 @@
             <li class=""><a href="index.html">Main</a></li>
             <li class=""><a href="extend.js.html">extend.js</a></li>
             <li class=""><a href="generator.js.html">generator.js</a></li>
-            <li class=""><a href="index.js.html">index.js</a></li>
+            <li class=""><a href="schemas.js.html">schemas.js</a></li>
             <li class="active"><a href="services.js.html">services.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#fs"><i class="alert alert-success"></i>fs</a>
+              </li>
               <li><a href="#config"><i class="alert alert-success"></i>config</a>
               </li>
               <li><a href="#services"><i class="alert alert-success"></i>services</a>
@@ -84,12 +86,17 @@
         <div class="span9">
           <div class="description"><p>shint node: true</p> </div>
           <pre><code class="language-javascript">'use strict';</code></pre>
+          <section id="fs">
+            <h1>fs</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>fs</span>
+            </p>
+          </section>
           <div class="description"><p>Service Loader for the restapi tool</p> </div>
-          <pre><code class="language-javascript">// Load the YAML parser module
-require( 'js-yaml' );
+          <pre><code class="language-javascript">var fs = require('fs');
 
-// Load the should module for validation
-var should = require( 'should' );</code></pre>
+var schemas = require('./schemas.js');</code></pre>
           <section id="config">
             <h1>config</h1>
             <h5 class="subheader"></h5>
@@ -144,99 +151,42 @@ var should = require( 'should' );</code></pre>
 };
 
 var loadJsonFile = function (contentFileName) {
-    var content = require(contentFileName);
+    var content = null;
+
+    try {
+        content = require(contentFileName);
+    } catch (error) {
+        console.log(error);
+    };
     return content;
 };
 
 var loadConfig = function(configFileName) {
-    return loadJsonFile(configFileName);
-};
 
-var validateServiceParameter = function (parameter) {
-    parameter.should.be.instanceof(Object);
-    parameter.should.have.property('name');
-    parameter.should.have.property('kind');
-    ['URL', 'QUERY', 'BODY'].should.include(parameter.kind);
-    parameter.should.have.property('required'); // true | false
-    [true, false].should.include(parameter.required);
-    parameter.should.have.property('type');
-    parameter.should.have.property('summary');
-    parameter.should.have.property('default');
-};
+    var config = loadJsonFile(configFileName);
+    if (config !== null) {
+        var err = schemas.validate(config, 'serviceConfigSchema.yml');
 
-var validateServiceStatusCode = function (statusCode) {
-    statusCode.should.be.instanceof(Object);
-    statusCode.should.have.property('statusCode');
-    statusCode.should.have.property('reason');
-};
-
-var validateServiceCookie = function (cookie) {
-    cookie.should.be.instanceof(Object);
-    cookie.should.have.property('Cookie');
-};
-
-var validateServiceExample = function (example) {
-    example.should.be.instanceof(Object);
-    example.should.have.property('url');
-
-    example.should.have.property('request');
-    example.request.should.be.instanceof(Object);
-    example.request.should.have.property('cookies').and.be.an.instanceOf(Array);
-    example.request.should.have.property('headers').and.be.an.instanceOf(Array);
-
-    example.should.have.property('response');
-    example.response.should.be.instanceof(Object);
-    example.response.should.have.property('cookies').and.be.an.instanceOf(Array);
-    example.response.should.have.property('headers').and.be.an.instanceOf(Array);
-    example.response.should.have.property('statusCode');
-    example.response.should.have.property('body');
-};
-
-var validateServiceDescriptor = function (serviceDesc) {
-    serviceDesc.should.be.instanceof(Object);
-    serviceDesc.should.have.property('name');
-    serviceDesc.should.have.property('description');
-    serviceDesc.should.have.property('style');
-    serviceDesc.should.have.property('urlPattern');
-    serviceDesc.should.have.property('methods');
-
-    serviceDesc.methods.should.be.instanceof(Object);
-
-    for( var method in serviceDesc.methods ) {
-        if( serviceDesc.methods.hasOwnProperty(method) ) {
-            ['GET', 'PUT', 'POST', 'DELETE'].should.include( method );
-            var serviceMethod = serviceDesc.methods[method];
-            serviceMethod.should.be.instanceof(Object);
-            serviceMethod.should.have.property('summary');
-            serviceMethod.should.have.property('notes');
-            // serviceMethod.should.have.property('implementation');
-            serviceMethod.should.have.property('request');
-            serviceMethod.should.have.property('responses');
-            serviceMethod.should.have.property('testCases');
-
-            serviceMethod.request.should.have.property('parameters').and.be.an.instanceOf(Array);
-            serviceMethod.request.parameters.forEach(function(parameter){validateServiceParameter(parameter);});
-
-            // serviceMethod.should.have.property('statusCodes').and.be.an.instanceOf(Array);
-            // serviceMethod.statusCodes.forEach(function(statusCode){validateServiceStatusCode(statusCode)});
-
-            serviceMethod.request.should.have.property('cookies').and.be.an.instanceOf(Array);
-            // TODO: validate the array items
-            serviceMethod.request.cookies.forEach(function(cookie){validateServiceCookie(cookie);});
-
-            // serviceMethod.should.have.property('examples').and.be.a('object');
-            // TODO: validate the array items
-            // serviceMethod.examples.forEach(function(example){validateServiceExample(example)});
-
-            // serviceMethod.should.have.property('responseValidationSchema');
+        if (err.length &gt; 0 ) {
+            console.log('\nERROR: In config file: ' + configFileName);
+            err.forEach(function(error) {
+                console.log(error.desc);
+            });
+            return null;
         }
     }
+
+    return config;
 };
+
 
 exports.load = function(restapiRoot) {
     var path = require( 'path' );
 
     config = loadConfig(path.resolve(restapiRoot,'config.yml'));
+    if (config === null) {
+        return null;
+    }
 
     var baseFolder = path.resolve(restapiRoot, config.servicesRoot),
         servicesToLoad = config.services;
@@ -270,16 +220,21 @@ var loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
         var serviceDescriptor = require( serviceDescriptorFileName );
 
         // Validate the service description
-        // console.log('Validating ' + serviceDescriptorFileName);
-        validateServiceDescriptor(serviceDescriptor);
+        var err = schemas.validate(serviceDescriptor, 'serviceSchema.yml');
+        if (err.length &gt; 0 ) {
+            console.log('\nERROR: In service descriptor file: ' + serviceDescriptorFileName);
+            err.forEach(function(error) {
+                console.log(error);
+            });
+        } else {
+            updateMethodLists(serviceDescriptor);
 
-        updateMethodLists(serviceDescriptor);
-
-        // Set service description to services map
-        // console.log(serviceDescriptorFileName + 'service is loaded.\n');
-        serviceDescriptor.restapiRoot = restapiRoot;
-        serviceDescriptor.contentPath = servicesRoot + servicePath;
-        services[serviceDescriptor.urlPattern] = serviceDescriptor;
+            // Set service description to services map
+            // console.log(serviceDescriptorFileName + 'service is loaded.\n');
+            serviceDescriptor.restapiRoot = restapiRoot;
+            serviceDescriptor.contentPath = servicesRoot + servicePath;
+            services[serviceDescriptor.urlPattern] = serviceDescriptor;
+        }
     });
     return services;
 };
@@ -368,7 +323,7 @@ exports.getAllTestCases = function () {
 
     for (var service in services ) {
         if ( services.hasOwnProperty(service) ) {
-            console.log('get test cases of ' + service);
+            // console.log('get test cases of ' + service);
             var serviceDesc = services[service];
             for (var method in serviceDesc.methods ) {
                 if( serviceDesc.methods.hasOwnProperty(method) ) {

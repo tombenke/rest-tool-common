@@ -91,6 +91,10 @@ definitions:
                 $ref: "http://tombenke.github.io/rest-tool-common/schemas/cookiesSchema.yml#cookies"
             headers:
                 $ref: "http://tombenke.github.io/rest-tool-common/schemas/headersSchema.yml#headers"
+            mockBody:
+                description: |
+                    The path to the file which contain the mock request body.
+                    For example: postOperation-requestBody.json
 
     responses:
         description: Specification of the responses
@@ -107,10 +111,13 @@ definitions:
                 description: |
                     The name of the response.
                     At least one 'OK' response must be defined.
+                type: string
             statusCode:
                 description: The status code of the response
+                type: [integer, string]
             reason:
                 description: The reason of the status code
+                type: string
             description:
                 description: Details and notes about the response
                 type: [string, "null"]
@@ -118,6 +125,7 @@ definitions:
                 description: |
                     The JSON-schema to validate the content of the response
                     for example: getMonitoringIsAlive-responseBody-validationSchema.json
+                type: string
             cookies:
                 description: The definitions of the response cookies
                 $ref: "http://tombenke.github.io/rest-tool-common/schemas/cookiesSchema.yml#cookies"
