@@ -17,7 +17,7 @@ var validateTestCase = function (testCase) {
     testCase.service.should.be.instanceof(Object);
     testCase.service.should.have.property('name');
     testCase.service.should.have.property('description');
-    testCase.service.should.have.property('urlPattern');
+    testCase.service.should.have.property('uriTemplate');
     testCase.service.should.have.property('style');
     testCase.service.style.should.match(/OPERATION|RESOURCE/);
 

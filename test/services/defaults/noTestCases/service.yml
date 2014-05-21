@@ -3,7 +3,7 @@ description: |
     This is a text service.yml file, which makes sure that
     the service loader will create an empty 'testCases' property
     for every method, which has no test cases defined.
-urlPattern: /defaults/noTestCases
+uriTemplate: /defaults/noTestCases
 methods:
     GET:
         summary: This is a dummy GET method

@@ -10,7 +10,7 @@ definitions:
     service:
         description: The service specification
         type: object
-        required: [name, description, urlPattern, methods]
+        required: [name, description, uriTemplate, methods]
         properties:
             name:
                 description: The name of the service
@@ -18,8 +18,8 @@ definitions:
             description:
                 description: Short desciption of the service
                 type: string
-            urlPattern:
-                description: The URL pattern of the service
+            uriTemplate:
+                description: The URI template of the service
                 type: string
             style:
                 description: |
