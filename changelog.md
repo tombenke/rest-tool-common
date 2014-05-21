@@ -1,3 +1,10 @@
+# 0.4.1
+
+- Handle default values of the service descriptor 
+in request and responses objects of testCases:
+   - headers, and
+   - cookies.
+
 # 0.4.0
 
 - Make an alias for uriTemplate (urlPattern)
