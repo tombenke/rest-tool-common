@@ -10,7 +10,7 @@ definitions:
     service:
         description: The service specification
         type: object
-        required: [name, description, urlPattern, style, methods]
+        required: [name, description, urlPattern, methods]
         properties:
             name:
                 description: The name of the service
@@ -25,7 +25,7 @@ definitions:
                 description: |
                     Tells whether it is an RPC-like OPERATION,
                     or a RESOURCE, which fully comply to the REST principles
-                type: string
+                type: [string, "null"]
                 enum: [OPERATION, COLLECTION, RESOURCE]
             methods:
                 $ref: "#/definitions/methods"
@@ -56,7 +56,7 @@ definitions:
     method:
         description: Specification of one method
         type: object
-        required: [summary, request, responses, testCases]
+        required: [summary, responses]
         properties:
             summary:
                 description: Short summary of the service method
@@ -80,7 +80,7 @@ definitions:
     request:
         description: Specification of the request
         type: object
-        required: [parameters, cookies, headers]
+        required: []
         properties:
             description:
                 description: Details and notes about the request
@@ -105,7 +105,7 @@ definitions:
     response:
         description: Specification of one response
         type: object
-        required: [name, statusCode, reason, cookies, headers]
+        required: [name, statusCode, reason]
         properties:
             name:
                 description: |

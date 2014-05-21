@@ -10,6 +10,7 @@ services:
     - /customers
     - /customers/customer
     - /monitoring/isAlive
+    - /defaults/noTestCases
     # To add new services, put here the path of the directory that contains the service.yml
 
 loginCredentials:
