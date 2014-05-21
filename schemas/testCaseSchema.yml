@@ -10,7 +10,7 @@ definitions:
         id: "#testCase"
         description: Specification of one test case
         type: object
-        required: [name, description, url, template, request, response]
+        required: [name, description, url, template, response]
         properties:
             name:
                 description: The name of the test case
@@ -35,11 +35,9 @@ definitions:
 
     testCaseRequest:
         description: Specification of the test case request
-        type: object
-        required: [cookies, headers]
+        type: [object, "null"]
+        # required: [cookies, headers]
         properties:
-            parameters:
-                $ref: "http://tombenke.github.io/rest-tool-common/schemas/requestParametersSchema.yml#requestParameters"
             cookies:
                 $ref: "http://tombenke.github.io/rest-tool-common/schemas/cookiesSchema.yml#cookies"
             headers:
@@ -52,7 +50,7 @@ definitions:
     testCaseResponse:
         description: Specification of one response
         type: object
-        required: [statusCode, cookies, headers]
+        required: [statusCode]
         properties:
             statusCode:
                 description: The status code of the response

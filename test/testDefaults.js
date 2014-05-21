@@ -18,25 +18,41 @@ describe('Services', function() {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
 
-            var noTestCasesService = allServices['/defaults/noTestCases'];
+            // Check if each method and their request and response objects
+            // have arrays of headers and cookies
+            for (var serviceName in allServices) {
+                if (allServices.hasOwnProperty(serviceName)) {
+                    var service = allServices[serviceName];
+                    var methods = service.methods;
 
-            // Check the default values
-            noTestCasesService.should.have.property('style');
-            noTestCasesService.style.should.equal('OPERATION');
+                    service.should.have.property('style');
 
-            noTestCasesService.methods.GET.request.should.exist;
-            noTestCasesService.methods.GET.request.should.be.instanceOf(Object);
+                    for (var methodName in methods) {
+                        if (methods.hasOwnProperty(methodName)) {
+                            var method = methods[methodName];
+                            method.request.should.exist;
+                            method.request.should.be.instanceOf(Object);
 
-            noTestCasesService.methods.GET.request.parameters.should.be.instanceOf(Array);
-            noTestCasesService.methods.GET.request.parameters.length.should.equal(0);
+                            method.request.parameters.should.be.instanceOf(Array);
+                            method.request.headers.should.be.instanceOf(Array);
+                            method.request.cookies.should.be.instanceOf(Array);
 
-            noTestCasesService.methods.GET.request.headers.should.be.instanceOf(Array);
-            noTestCasesService.methods.GET.request.headers.length.should.equal(0);
+                            method.testCases.should.be.instanceOf(Array);
+                            method.testCases.forEach(function(testCase) {
+                                testCase.request.should.exist;
+                                testCase.request.should.be.instanceOf(Object);
+                                testCase.request.headers.should.be.instanceOf(Array);
+                                testCase.request.cookies.should.be.instanceOf(Array);
 
-            noTestCasesService.methods.GET.request.cookies.should.be.instanceOf(Array);
-            noTestCasesService.methods.GET.request.cookies.length.should.equal(0);
-
-            noTestCasesService.methods.GET.testCases.length.should.equal(0);
+                                testCase.response.should.exist;
+                                testCase.response.should.be.instanceOf(Object);
+                                testCase.response.headers.should.be.instanceOf(Array);
+                                testCase.response.cookies.should.be.instanceOf(Array);
+                            });
+                        }
+                    }
+                }
+            }
 
             // If reached here, then fine.
             done();
