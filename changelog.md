@@ -1,3 +1,7 @@
+# 0.4.2
+
+- Fix: add service command does not create recursively the missing directories
+
 # 0.4.1
 
 - Handle default values of the service descriptor 
