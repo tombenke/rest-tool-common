@@ -27,5 +27,8 @@
     "should": "3.1.2",
     "jayschema": "0.2.x",
     "wrench": "1.5.6"
+  },
+  "scripts": {
+    "test": "mocha -R spec test"
   }
 }

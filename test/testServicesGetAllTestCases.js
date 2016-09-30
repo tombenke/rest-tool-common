@@ -5,6 +5,7 @@ var fs = require('fs'),
     should = require('should'),
     mocha = require('mocha'),
     schemas = require('../lib/schemas.js');
+var path = require('path');
 
 /**
  * Validate the testCase object
@@ -37,9 +38,9 @@ var validateTestCase = function (testCase) {
 describe('Services', function() {
 
     it('#getAllTestCases()', function(done) {
-        var services = require('../lib/services.js');
+        var services = require('../index').services;
 
-        if (services.load(__dirname + '/services' ) === null ) {
+        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') === null) {
             done('ERROR: services.load unsuccessful.');
         } else {
             var allTestCases = services.getAllTestCases();

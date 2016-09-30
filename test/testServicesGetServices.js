@@ -2,16 +2,18 @@
 /*jshint node: true */
 'use strict';
 
-var fs = require('fs'),
-    schemas = require('../lib/schemas.js'),
-    mocha = require('mocha');
+var fs = require('fs');
+var should = require('should');
+var schemas = require('../lib/schemas.js');
+var mocha = require('mocha');
+var path = require('path');
 
 describe('Services', function() {
 
     it('#getServices()', function(done) {
-        var services = require('../lib/services.js');
+        var services = require('../index').services;
 
-        if (services.load(__dirname + '/services' ) === null ) {
+        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') === null) {
             done('ERROR: services.load unsuccessful.');
         } else {
             var allServices = services.getServices();

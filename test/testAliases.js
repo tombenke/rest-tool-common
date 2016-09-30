@@ -6,13 +6,14 @@ var fs = require('fs'),
     should = require('should'),
     schemas = require('../lib/schemas.js'),
     mocha = require('mocha');
+var path = require('path');
 
 describe('Services', function() {
 
     it('#testAliases()', function(done) {
-        var services = require('../lib/services.js');
+        var services = require('../index').services;
 
-        if (services.load(__dirname + '/services' ) === null ) {
+        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') === null) {
             done('ERROR: services.load unsuccessful.');
         } else {
             var allServices = services.getServices();
