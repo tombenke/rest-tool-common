@@ -1,0 +1,13 @@
+---
+name: The Solar System
+summary: The planet system of the Sun
+planets:
+    - name: Earth
+      earthMass: 1
+      moons:
+        - Moon
+    - name: Mars
+      earthMass: 0.11
+      moons:
+        - Phobos
+        - Deimos

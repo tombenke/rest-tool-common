@@ -1,0 +1,26 @@
+id: "http://tombenke.github.io/rest-tool-common/schemas/planetSchema.yml#"
+$schema: "http://json-schema.org/draft-04/schema#"
+title: planetSchema
+description: |
+  This schema file contains the structure of documents, that describe the planets of the solar system
+$ref: "#/definitions/planet"
+
+definitions:
+    planet:
+        id: "#planet"
+        type: object
+        required: [name, earthMass, moons]
+
+        properties:
+            name:
+                description: The name of the planet
+                type: string
+            earthMass:
+                description: The mass of the planet relative to the mass of the Earth
+                type: number
+            moons:
+                description: The list of moons the planet has
+                type: array
+                items:
+                    description: The name of the moon
+                    type: string

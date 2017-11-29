@@ -1,6 +1,6 @@
 id: "http://tombenke.github.io/rest-tool-common/schemas/headersSchema.yml#"
 $schema: "http://json-schema.org/draft-04/schema#"
-title: cookies
+title: headers
 description: Specification of the headers
 $ref: "#/definitions/headers"
 
