@@ -23,6 +23,7 @@
   "main": "dist/index.js",
   "dependencies": {
     "datafile": "^2.0.0",
+    "handlebars": "^4.0.11",
     "jayschema": "0.2.x",
     "js-yaml": "2.1.0",
     "lodash": "^4.17.4",

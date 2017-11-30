@@ -25,23 +25,4 @@ definitions:
         description: The list of planet objects
         type: array
         items:
-#            $ref: "#/definitions/planet"
             $ref: "http://tombenke.github.io/rest-tool-common/schemas/planetSchema.yml#planet"
-
-#    planet:
-#        type: object
-#        required: [name, earthMass, moons]
-#
-#        properties:
-#            name:
-#                description: The name of the planet
-#                type: string
-#            earthMass:
-#                description: The mass of the planet relative to the mass of the Earth
-#                type: number
-#            moons:
-#                description: The list of moons the planet has
-#                type: array
-#                items:
-#                    description: The name of the moon
-#                    type: string
