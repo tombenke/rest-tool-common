@@ -3,17 +3,16 @@
 'use strict';
 
 /**
- * Generator module for the rest-tool-common library
+ * Universal generator module to create directories files and template based contents
+ *
  * @module generator
  */
 
-import extend from 'lodash'
-
-const mu = require('mu2')
-const fs = require('fs')
-const path = require('path')
-const wrench = require('wrench')
-let verbose = true
+import merge from 'lodash'
+import handlebars from 'handlebars'
+import fs from 'fs'
+import path from 'path'
+import wrench from 'wrench'
 
 exports.createDirectoryTree = function(rootDirName, projectTree, removeIfExist) {
     let rootDirPath = path.resolve(rootDirName)
@@ -30,7 +29,7 @@ exports.createDirectoryTree = function(rootDirName, projectTree, removeIfExist) 
     wrench.mkdirSyncRecursive(rootDirPath)
     projectTree.forEach( function(dir) {
         var dirToCreate = path.resolve( path.join( rootDirName, dir))
-        if (verbose) console.log('Create "' + dirToCreate + '"')
+        console.log('Create "' + dirToCreate + '"')
         fs.mkdirSync(dirToCreate)
     })
     return true
@@ -40,7 +39,7 @@ exports.copyDir = function(context, opts) {
     let sourceDirName = path.resolve(opts.sourceBaseDir, opts.dirName)
     let destDirName = path.resolve(opts.targetBaseDir, opts.dirName)
 
-    if (verbose) console.log('Copy dir from: ' + sourceDirName + ' to: ' + destDirName)
+    console.log('Copy dir from: ' + sourceDirName + ' to: ' + destDirName)
     wrench.copyDirSyncRecursive(sourceDirName, destDirName, opts)
 }
 
@@ -50,28 +49,58 @@ exports.copyFile = function(fileName, sourceBaseDir, targetBaseDir, context) {
     let sourceFileName = path.resolve(sourceBaseDir, fileName)
     let destFileName = path.resolve(targetBaseDir, fileName)
 
-    if (verbose) console.log('Copy file from: ' + sourceFileName + ' to: ' + destFileName)
+    console.log('Copy file from: ' + sourceFileName + ' to: ' + destFileName)
     fs.writeFileSync(destFileName, fs.readFileSync(sourceFileName))
 }
 
+const loadTextFileSync = function(fileName, raiseErrors=true) {
+	let content = null
+
+    if (fileName) {
+        try {
+            content = fs.readFileSync(path.resolve(fileName), { encoding: 'utf8' })
+        } catch (err) {
+            if (raiseErrors) {
+                throw(err)
+            }
+        }
+    } else {
+        if (raiseErrors) {
+            throw(new Error('File name is missing!'))
+        }
+    }
+    return content
+}
+
+const saveTextFileSync = function(fileName, content, raiseErrors=true) {
+
+    if (fileName) {
+        try {
+            fs.writeFileSync(path.resolve(fileName), content, { encoding: 'utf8' })
+        } catch (err) {
+            if (raiseErrors) {
+                throw(err)
+            }
+        }
+    } else {
+        if (raiseErrors) {
+            throw(new Error('File name is missing!'))
+        }
+    }
+}
+
 exports.processTemplate = function(context, opts) {
-    let templateFileName = path.resolve(opts.sourceBaseDir, opts.template)
-    let fileName = path.resolve(opts.targetBaseDir, opts.template)
-    let buffer = ''
-    let view = {}
+    const templateFileName = path.resolve(opts.sourceBaseDir, opts.template)
+    const resultFileName = path.resolve(opts.targetBaseDir, opts.template)
+    const view = merge({}, context)
+    const rawTemplate = loadTextFileSync(templateFileName)
 
-    if (verbose) console.log('templateFileName: ' + templateFileName)
-    if (verbose) console.log('fileName: ' + fileName)
+    console.log('templateFileName: ' + templateFileName)
+    console.log('resultFileName: ' + resultFileName)
+    console.log(view, rawTemplate)
 
-    extend(view, context)
-
-    mu.compileAndRender(templateFileName, view)
-        .on('data', function(c) {
-            buffer += c.toString()
-        })
-        .on('end', function() {
-            fs.writeFile(fileName, buffer, function(err) {
-                if (err) throw err
-            })
-        })
+    const template = handlebars.compile(rawTemplate)
+    const outputContent = template(context)
+    console.log(outputContent)
+    saveTextFileSync(resultFileName, outputContent)
 }
