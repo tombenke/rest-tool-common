@@ -27,7 +27,6 @@
     "jayschema": "0.2.x",
     "js-yaml": "2.1.0",
     "lodash": "^4.17.4",
-    "mu2": "0.5.20",
     "wrench": "1.5.6"
   },
   "devDependencies": {

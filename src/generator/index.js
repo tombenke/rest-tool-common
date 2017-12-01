@@ -8,11 +8,13 @@
  * @module generator
  */
 
-import merge from 'lodash'
+import * as _ from 'lodash'
 import handlebars from 'handlebars'
 import fs from 'fs'
 import path from 'path'
 import wrench from 'wrench'
+
+import { loadTextFileSync, saveTextFileSync } from 'datafile'
 
 exports.createDirectoryTree = function(rootDirName, projectTree, removeIfExist) {
     let rootDirPath = path.resolve(rootDirName)
@@ -44,7 +46,7 @@ exports.copyDir = function(context, opts) {
 }
 
 exports.copyFile = function(fileName, sourceBaseDir, targetBaseDir, context) {
-        console.log('copyFile...' + fileName)
+    console.log('copyFile...' + fileName)
 
     let sourceFileName = path.resolve(sourceBaseDir, fileName)
     let destFileName = path.resolve(targetBaseDir, fileName)
@@ -53,54 +55,26 @@ exports.copyFile = function(fileName, sourceBaseDir, targetBaseDir, context) {
     fs.writeFileSync(destFileName, fs.readFileSync(sourceFileName))
 }
 
-const loadTextFileSync = function(fileName, raiseErrors=true) {
-	let content = null
-
-    if (fileName) {
-        try {
-            content = fs.readFileSync(path.resolve(fileName), { encoding: 'utf8' })
-        } catch (err) {
-            if (raiseErrors) {
-                throw(err)
-            }
-        }
-    } else {
-        if (raiseErrors) {
-            throw(new Error('File name is missing!'))
-        }
-    }
-    return content
-}
-
-const saveTextFileSync = function(fileName, content, raiseErrors=true) {
-
-    if (fileName) {
-        try {
-            fs.writeFileSync(path.resolve(fileName), content, { encoding: 'utf8' })
-        } catch (err) {
-            if (raiseErrors) {
-                throw(err)
-            }
-        }
-    } else {
-        if (raiseErrors) {
-            throw(new Error('File name is missing!'))
-        }
-    }
-}
-
 exports.processTemplate = function(context, opts) {
     const templateFileName = path.resolve(opts.sourceBaseDir, opts.template)
     const resultFileName = path.resolve(opts.targetBaseDir, opts.template)
-    const view = merge({}, context)
+    const view = _.merge({}, context)
     const rawTemplate = loadTextFileSync(templateFileName)
 
     console.log('templateFileName: ' + templateFileName)
     console.log('resultFileName: ' + resultFileName)
-    console.log(view, rawTemplate)
+    console.log('view: ', view)
+    console.log('rawTemplate: ', rawTemplate)
 
-    const template = handlebars.compile(rawTemplate)
-    const outputContent = template(context)
-    console.log(outputContent)
+    handlebars.registerPartial({
+        "header.html": "<p>This is a header</p>\n",
+        "footer.html": "<p>This is a footer with copyright: {{> copyright.html}}</p>\n",
+        "copyright.html": "(c) 2017 - {{projectName}}"
+    })
+
+    let template = handlebars.compile(rawTemplate)
+    console.log('template: ', template)
+    let outputContent = template(view)
+    console.log('outputContent: ', outputContent)
     saveTextFileSync(resultFileName, outputContent)
 }

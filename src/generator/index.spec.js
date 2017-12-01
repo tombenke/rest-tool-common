@@ -8,27 +8,18 @@ import should from 'should'
 import * as generator from './index'
 
 const destCleanup = function(cb) {
-    const dest = path.resolve('./tmp/');
-    console.log('Remove: ', dest)
-    rimraf(dest, function(err) {
-        if (err) {
-            console.log(err)
-        } else {
-            if (cb) cb()
-        }
-    })
+    const dest = path.resolve('./tmp/')
+    rimraf(dest, cb)
 }
 
 before(function(done) {
-    console.log('Before...')
-    destCleanup(function() { done() })
+    destCleanup(done)
 })
 
 after(function(done) {
-    console.log('After...')
-    destCleanup(function() { done() })
+    destCleanup(done)
+//    done()
 })
-
 
 describe('generator', function() {
 

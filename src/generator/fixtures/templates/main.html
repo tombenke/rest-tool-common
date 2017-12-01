@@ -2,13 +2,13 @@
 <head>
 </head>
 <body>
-    {{!-- > header.html --}}
+    {{> header.html }}
     <h1>{{projectName}}</h1>
     <ul>
     {{#itemsToList}}
         <li><a href="{{uri}}">{{name}}</a></li>
     {{/itemsToList}}
     </ul>
-    {{!-- > footer.html --}}
+    {{> footer.html }}
 </body>
 </html>
