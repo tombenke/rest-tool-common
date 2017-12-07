@@ -8,7 +8,15 @@
  * @module services
  */
 
-const schemas = require('./schemas/')
+import path from 'path'
+import * as _ from 'lodash'
+import {
+    validate,
+    findFilesSync,
+    loadJsonFileSync,
+    loadTextFileSync
+} from 'datafile'
+//const schemas = require('/schemas/')
 const schemaBasePath = __dirname + '/../schemas/'
 
 /** Descriptors object, that holds all services and provides details */
@@ -30,62 +38,6 @@ const mapOwnProperties = function(obj, func) {
 }
 
 /**
- * Load content identified by 'contentFileName' with the selected 'encoding'.
- *
- * Mainly used to load mock bodies from files.
- *
- * @arg  {String} contentFileName - The path to the content file
- * @arg  {String} encoding        - The encoding of the content file
- * @arg {Buffer}                  - The content
- */
-const loadFile = function (contentFileName, encoding) {
-    const fs = require('fs')
-    // console.log('loadFile:' + contentFileName)
-    return(fs.readFileSync(contentFileName, encoding))
-}
-
-/** Load JSON format content from file.
- *
- * @arg {String} contentFileName - The path to the file which holds the content to load in.
- *
- * @return {Object} The content of the loaded file as a JSON object.
- *
- * @throws Throws an error if there is a problem with loading the file.
- */
-const loadJsonFile = function (contentFileName) {
-    let content = null
-
-    try {
-        content = require(contentFileName)
-    } catch (error) {
-        //console.log(error)
-    }
-    return content
-}
-
-/**
- * Load services config file, and validates with the serviceConfigSchema.yml validator.
- *
- * @arg {String} configFileName - The path of the service config file
- *
- * @return {Object} - in case of success, return with the configuration object, in case of validation error return with `null` and writes error messages to console.
- */
-const loadConfig = function(configFileName) {
-
-    let config = loadJsonFile(configFileName)
-    if (config !== null) {
-        let err = schemas.validate(config, schemaBasePath, 'serviceConfigSchema.yml')
-
-        if (err.length > 0) {
-            console.log('\nERROR: In config file: ' + configFileName)
-            return null
-        }
-    }
-
-    return config
-}
-
-/**
  * Load all service descriptors
  *
  * @arg {String} restapiRoot  - The path to the main config file of the services named: `config.yml`.
@@ -93,19 +45,14 @@ const loadConfig = function(configFileName) {
  *
  * @return {Object} - The Object, which holds all service descriptors, using the URI patterns as keys.
  * in case of error returns with `null`.
+ *
+ * @function
  */
-exports.load = function(restapiRoot, servicesRoot) {
-    const path = require( 'path' )
+exports.load = (restapiRoot, servicesRoot='services') => {
+    const fullServicesRoot = path.resolve(restapiRoot, servicesRoot)
+    const servicesToLoad = _.map(findFilesSync(fullServicesRoot, /^service\.yml$/), servicePath =>
+        servicePath.replace(fullServicesRoot, '').replace('/service.yml', ''))
 
-    const config = loadConfig(path.resolve(restapiRoot, 'config.yml'))
-    if (config === null) {
-        return null
-    }
-
-    //const baseFolder = path.resolve(restapiRoot, servicesRoot),
-    let servicesToLoad = config.services
-
-    // console.log('load(%s,%s)', restapiRoot, servicesRoot)
     return loadServices(restapiRoot, servicesRoot, servicesToLoad)
 }
 
@@ -119,8 +66,10 @@ exports.load = function(restapiRoot, servicesRoot) {
  * Note: The original service descriptor object will be changed.
  *
  * @arg {Object} serviceDescriptor - The service descriptor object
+ *
+ * @function
  */
-const updateMethodLists = function (serviceDescriptor) {
+const updateMethodLists = serviceDescriptor => {
     serviceDescriptor.methodList = []
 
     for (let method in serviceDescriptor.methods) {
@@ -243,7 +192,6 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
     const path = require('path' )
 
     const baseFolder = path.resolve(restapiRoot, servicesRoot)
-    // console.log('loadServices from ', baseFolder)
 
     // serviceFolders
     servicesToLoad.forEach(function (servicePath) {
@@ -251,12 +199,12 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
 
         // Load the YAML format service descriptor
         // console.log('Loading ' + serviceDescriptorFileName)
-        let serviceDescriptor = require( serviceDescriptorFileName )
+        let serviceDescriptor = loadJsonFileSync(serviceDescriptorFileName) //require( serviceDescriptorFileName )
 
         setAliases(serviceDescriptor)
 
         // Validate the service description
-        let err = schemas.validate(serviceDescriptor, schemaBasePath, 'serviceSchema.yml')
+        let err = validate(serviceDescriptor, schemaBasePath, 'serviceSchema.yml')
         if (err.length == 0 ) {
             setDefaults(serviceDescriptor)
             updateMethodLists(serviceDescriptor)
@@ -308,14 +256,16 @@ const getMockBody = function(serviceDesc, mockBodyPath, contentType) {
     if (mockBodyPath !== '') {
         mockBodyPath = serviceDesc.restapiRoot + '/' + serviceDesc.contentPath + '/' + mockBodyPath
         if(contentType === 'application/json') {
-            mockBodyContent = loadJsonFile(mockBodyPath)
+            mockBodyContent = loadJsonFileSync(mockBodyPath)
         } else {
             if( contentType === 'text/plain' ||
                 contentType === 'text/html' ||
                 contentType === 'text/xml') {
-                mockBodyContent = loadFile(mockBodyPath, 'utf-8')
+                //mockBodyContent = loadFile(mockBodyPath, 'utf-8')
+                mockBodyContent = loadTextFileSync(mockBodyPath, 'utf-8')
             } else {
-                mockBodyContent = loadFile(mockBodyPath, null)
+                //mockBodyContent = loadFile(mockBodyPath, null)
+                mockBodyContent = loadTextFileSync(mockBodyPath, null)
             }
         }
     }

@@ -1,8 +1,11 @@
 /*jshint node: true */
 'use strict';
 
+const services = require('./index').services;
 const should = require('should')
-const schemas = require('./schemas')
+import {
+    validate
+} from 'datafile'
 const path = require('path')
 const schemaBasePath = __dirname + '/../schemas/'
 
@@ -29,31 +32,28 @@ const validateTestCase = function (testCase) {
     // Validate testCase
     testCase.should.have.property('testCase')
     testCase.testCase.should.be.instanceof(Object)
-    schemas.validate(testCase.testCase, schemaBasePath, 'testCaseSchema.yml')
+    validate(testCase.testCase, schemaBasePath, 'testCaseSchema.yml')
 
     return true
 }
 
 describe('services', function() {
 
-    it('#load()', function(done) {
-        const services = require('./index').services;
+    it('#load() - with default services path', function(done) {
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             done()
         }
     })
 
-    it('#loadFails()', function(done) {
-        const services = require('./index').services
+    it('#load() - with explicit services path', function(done) {
 
-        if (services.load(path.resolve(__dirname, '/srvcs'), 'services' ) === null ) {
+        if (services.load(path.resolve(__dirname, 'fixtures')) != null) {
             done()
         }
     })
 
     it('#getServices()', function(done) {
-        var services = require('./index').services
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             let allServices = services.getServices()
@@ -62,7 +62,7 @@ describe('services', function() {
 
             for (let s in allServices) {
                 let service = allServices[s]
-                let errors = schemas.validate(service, schemaBasePath, 'serviceSchema.yml')
+                let errors = validate(service, schemaBasePath, 'serviceSchema.yml')
                 validationErrors += errors.length
             }
             if (validationErrors === 0) {
@@ -72,7 +72,6 @@ describe('services', function() {
     })
 
     it('#getAllTestCases()', function(done) {
-        var services = require('./index').services
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allTestCases = services.getAllTestCases()
@@ -88,7 +87,6 @@ describe('services', function() {
     })
 
     it('#testNoTestCases()', function(done) {
-        const services = require('./index').services
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             const allServices = services.getServices()
@@ -120,7 +118,7 @@ describe('services', function() {
     })
 
     it('#getMockRequestBody()', function(done) {
-        var services = require('./index').services
+
         const expectedResult = {
             "id": 1,
             "name": "John Doe",
@@ -136,7 +134,6 @@ describe('services', function() {
     })
 
     it('#getMockResponseBody()', function(done) {
-        var services = require('./index').services
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
@@ -147,7 +144,6 @@ describe('services', function() {
     })
 
     it('#testDefaults()', function(done) {
-        var services = require('./index').services
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
@@ -195,7 +191,6 @@ describe('services', function() {
     })
 
     it('#testAliases()', function(done) {
-        const services = require('./index').services
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             const allServices = services.getServices()

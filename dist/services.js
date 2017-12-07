@@ -9,8 +9,22 @@
  * @module services
  */
 
-var fs = require('fs');
-var schemas = require('./schemas.js');
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+var _lodash = require('lodash');
+
+var _ = _interopRequireWildcard(_lodash);
+
+var _datafile = require('datafile');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//const schemas = require('/schemas/')
+var schemaBasePath = __dirname + '/../schemas/';
 
 /** Descriptors object, that holds all services and provides details */
 var services = {};
@@ -31,65 +45,6 @@ var mapOwnProperties = function mapOwnProperties(obj, func) {
 };
 
 /**
- * Load content identified by 'contentFileName' with the selected 'encoding'.
- *
- * Mainly used to load mock bodies from files.
- * 
- * @arg  {String} contentFileName - The path to the content file
- * @arg  {String} encoding        - The encoding of the content file
- * @arg {Buffer}                  - The content
- */
-var loadFile = function loadFile(contentFileName, encoding) {
-    var fs = require('fs');
-    // console.log('loadFile:' + contentFileName);
-    return fs.readFileSync(contentFileName, encoding);
-};
-
-/** Load JSON format content from file.
- *
- * @arg {String} contentFileName - The path to the file which holds the content to load in.
- *
- * @return {Object} The content of the loaded file as a JSON object.
- * 
- * @throws Throws an error if there is a problem with loading the file.
- */
-var loadJsonFile = function loadJsonFile(contentFileName) {
-    var content = null;
-
-    try {
-        content = require(contentFileName);
-    } catch (error) {
-        console.log(error);
-    };
-    return content;
-};
-
-/**
- * Load services config file, and validates with the serviceConfigSchema.yml validator.
- *
- * @arg {String} configFileName - The path of the service config file
- *
- * @return {Object} - in case of success, return with the configuration object, in case of validation error return with `null` and writes error messages to console.
- */
-var loadConfig = function loadConfig(configFileName) {
-
-    var config = loadJsonFile(configFileName);
-    if (config !== null) {
-        var err = schemas.validate(config, 'serviceConfigSchema.yml');
-
-        if (err.length > 0) {
-            console.log('\nERROR: In config file: ' + configFileName);
-            err.forEach(function (error) {
-                console.log(error.desc);
-            });
-            return null;
-        }
-    }
-
-    return config;
-};
-
-/**
  * Load all service descriptors
  *
  * @arg {String} restapiRoot  - The path to the main config file of the services named: `config.yml`.
@@ -97,19 +52,17 @@ var loadConfig = function loadConfig(configFileName) {
  *
  * @return {Object} - The Object, which holds all service descriptors, using the URI patterns as keys.
  * in case of error returns with `null`.
+ *
+ * @function
  */
-exports.load = function (restapiRoot, servicesRoot) {
-    var path = require('path');
+exports.load = function (restapiRoot) {
+    var servicesRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'services';
 
-    var config = loadConfig(path.resolve(restapiRoot, 'config.yml'));
-    if (config === null) {
-        return null;
-    }
+    var fullServicesRoot = _path2.default.resolve(restapiRoot, servicesRoot);
+    var servicesToLoad = _.map((0, _datafile.findFilesSync)(fullServicesRoot, /^service\.yml$/), function (servicePath) {
+        return servicePath.replace(fullServicesRoot, '').replace('/service.yml', '');
+    });
 
-    var baseFolder = path.resolve(restapiRoot, servicesRoot),
-        servicesToLoad = config.services;
-
-    // console.log('load(%s,%s)', restapiRoot, servicesRoot);
     return loadServices(restapiRoot, servicesRoot, servicesToLoad);
 };
 
@@ -123,6 +76,8 @@ exports.load = function (restapiRoot, servicesRoot) {
  * Note: The original service descriptor object will be changed.
  *
  * @arg {Object} serviceDescriptor - The service descriptor object
+ *
+ * @function
  */
 var updateMethodLists = function updateMethodLists(serviceDescriptor) {
     serviceDescriptor.methodList = [];
@@ -247,31 +202,25 @@ var loadServices = function loadServices(restapiRoot, servicesRoot, servicesToLo
     var path = require('path');
 
     var baseFolder = path.resolve(restapiRoot, servicesRoot);
-    // console.log('loadServices from ', baseFolder);
 
     // serviceFolders
     servicesToLoad.forEach(function (servicePath) {
         var serviceDescriptorFileName = baseFolder + servicePath + '/service.yml';
 
         // Load the YAML format service descriptor
-        // console.log('Loading ' + serviceDescriptorFileName);
-        var serviceDescriptor = require(serviceDescriptorFileName);
+        // console.log('Loading ' + serviceDescriptorFileName)
+        var serviceDescriptor = (0, _datafile.loadJsonFileSync)(serviceDescriptorFileName); //require( serviceDescriptorFileName )
 
         setAliases(serviceDescriptor);
 
         // Validate the service description
-        var err = schemas.validate(serviceDescriptor, 'serviceSchema.yml');
-        if (err.length > 0) {
-            console.log('\nERROR: In service descriptor file: ' + serviceDescriptorFileName);
-            err.forEach(function (error) {
-                console.log(error);
-            });
-        } else {
+        var err = (0, _datafile.validate)(serviceDescriptor, schemaBasePath, 'serviceSchema.yml');
+        if (err.length == 0) {
             setDefaults(serviceDescriptor);
             updateMethodLists(serviceDescriptor);
 
             // Set service description to services map
-            // console.log(serviceDescriptorFileName + 'service is loaded.\n');
+            // console.log(serviceDescriptorFileName + 'service is loaded.\n')
             serviceDescriptor.restapiRoot = restapiRoot;
             serviceDescriptor.contentPath = servicesRoot + servicePath;
             services[serviceDescriptor.uriTemplate] = serviceDescriptor;
@@ -301,39 +250,41 @@ var findHeaderValue = function findHeaderValue(headers, field) {
 /**
  * Get the mock content body of a service.
  *
- * @param  {Object} serviceDesc - The service descriptor object
- * @param  {String} mockBody    - The filename of the mockBody content.
- *                                It has to be relative to the directory that holds the service descriptor.
- * @param  {String} contentType - The service descriptor object.
+ * @param  {Object} serviceDesc  - The service descriptor object
+ * @param  {String} mockBodyPath - The filename of the mockBody content.
+ * It has to be relative to the directory that holds the service descriptor.
+ * @param  {String} contentType  - The service descriptor object.
  * One of: 'text/plain', 'text/html', 'text/xml', 'application/json'.
  * The default content type is 'application/json'.
  *
- * @return {String}             - The content of the mock body
+ * @return {String} - The content of the mock body
  */
-var getMockBody = function getMockBody(serviceDesc, mockBody, contentType) {
-    var mockResponseBody = '';
+var getMockBody = function getMockBody(serviceDesc, mockBodyPath, contentType) {
+    var mockBodyContent = '';
 
-    //console.log('mockBody: ' + mockBody + ' contentType: ' + contentType);
-    if (mockBody !== '') {
-        mockBody = serviceDesc.restapiRoot + '/' + serviceDesc.contentPath + '/' + mockBody;
+    //console.log('mockBody: ' + mockBody + ' contentType: ' + contentType)
+    if (mockBodyPath !== '') {
+        mockBodyPath = serviceDesc.restapiRoot + '/' + serviceDesc.contentPath + '/' + mockBodyPath;
         if (contentType === 'application/json') {
-            mockResponseBody = loadJsonFile(mockBody);
+            mockBodyContent = (0, _datafile.loadJsonFileSync)(mockBodyPath);
         } else {
             if (contentType === 'text/plain' || contentType === 'text/html' || contentType === 'text/xml') {
-                mockResponseBody = loadFile(mockBody, 'utf-8');
+                //mockBodyContent = loadFile(mockBodyPath, 'utf-8')
+                mockBodyContent = (0, _datafile.loadTextFileSync)(mockBodyPath, 'utf-8');
             } else {
-                mockResponseBody = loadFile(mockBody, null);
+                //mockBodyContent = loadFile(mockBodyPath, null)
+                mockBodyContent = (0, _datafile.loadTextFileSync)(mockBodyPath, null);
             }
         }
     }
-    return mockResponseBody;
+    return mockBodyContent;
 };
 
 /**
  * Get the request body of a given method of a service.
  *
  * The default content type is 'application/json'.
- * 
+ *
  * @param  {String} method       The name of the method, such as: GET, PUT, etc
  * @param  {Object} serviceDesc  The service descriptor object
  *
@@ -346,7 +297,7 @@ exports.getMockRequestBody = function (method, serviceDesc) {
 
     if (typeof requestMockBody != 'undefined' && requestMockBody !== null) {
         mockBody = requestMockBody;
-        contentType = findHeaderValue(response.headers, 'Content-Type');
+        contentType = findHeaderValue(serviceDesc.methods[method].request.headers, 'Content-Type');
     }
 
     return getMockBody(serviceDesc, mockBody, contentType);
@@ -356,11 +307,11 @@ exports.getMockRequestBody = function (method, serviceDesc) {
  * Get the response body of a given method of a service.
  *
  * The default content type is `application/json`.
- * 
- * @param  {String} method       - The name of the method, such as GET, PUT, etc.
- * @param  {Object} serviceDesc  - The service descriptor object
- * @param  {Object} responseName - The name of the response, default: 'OK'
- * @return {String}              - The content of the mock body
+ *
+ * @param  {String} method         - The name of the method, such as GET, PUT, etc.
+ * @param  {Object} serviceDesc    - The service descriptor object
+ * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
+ * @return {String}                - The content of the mock body
  */
 exports.getMockResponseBody = function (method, serviceDesc, nameOfResponse) {
     var responseName = nameOfResponse || 'OK';
@@ -379,7 +330,7 @@ exports.getMockResponseBody = function (method, serviceDesc, nameOfResponse) {
 
 /**
  * Get the services object, that holds the complete set of service descriptors.
- * 
+ *
  * @return {Object} - The list of services, where the keys of the object are the URI patterns.
  */
 exports.getServices = function () {
@@ -396,34 +347,41 @@ exports.getAllTestCases = function () {
 
     for (var service in services) {
         if (services.hasOwnProperty(service)) {
-            // console.log('get test cases of ' + service);
-            var serviceDesc = services[service];
-            for (var method in serviceDesc.methods) {
-                if (serviceDesc.methods.hasOwnProperty(method)) {
-                    var methodDesc = serviceDesc.methods[method];
-                    methodDesc.testCases.forEach(function (testCaseDesc) {
-                        testCases.push({
-                            service: {
-                                name: serviceDesc.name,
-                                description: serviceDesc.description,
-                                uriTemplate: serviceDesc.uriTemplate,
-                                urlPattern: serviceDesc.uriTemplate,
-                                style: serviceDesc.style
-                            },
-                            method: method,
-                            testCase: {
-                                name: testCaseDesc.name,
-                                description: testCaseDesc.description,
-                                url: testCaseDesc.url,
-                                contentPath: serviceDesc.contentPath,
-                                template: testCaseDesc.template,
-                                request: testCaseDesc.request,
-                                response: testCaseDesc.response
-                            }
+            (function () {
+                // console.log('get test cases of ' + service)
+                var serviceDesc = services[service];
+
+                var _loop = function _loop(method) {
+                    if (serviceDesc.methods.hasOwnProperty(method)) {
+                        var methodDesc = serviceDesc.methods[method];
+                        methodDesc.testCases.forEach(function (testCaseDesc) {
+                            testCases.push({
+                                service: {
+                                    name: serviceDesc.name,
+                                    description: serviceDesc.description,
+                                    uriTemplate: serviceDesc.uriTemplate,
+                                    urlPattern: serviceDesc.uriTemplate,
+                                    style: serviceDesc.style
+                                },
+                                method: method,
+                                testCase: {
+                                    name: testCaseDesc.name,
+                                    description: testCaseDesc.description,
+                                    url: testCaseDesc.url,
+                                    contentPath: serviceDesc.contentPath,
+                                    template: testCaseDesc.template,
+                                    request: testCaseDesc.request,
+                                    response: testCaseDesc.response
+                                }
+                            });
                         });
-                    });
+                    }
+                };
+
+                for (var method in serviceDesc.methods) {
+                    _loop(method);
                 }
-            }
+            })();
         }
     }
     return testCases;

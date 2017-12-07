@@ -1,10 +1,10 @@
 name: Customers service
-description: This is the description of the service to customer collection resources
+description: This is the description of the service to __customer__ collection resources
 style: RESOURCE
 urlPattern: /customers
 methods:
     GET:
-        summary: List all the customers
+        summary: List _all_ the __customers__
         notes: List all the customers
         implementation: api.getCustomers
         request:

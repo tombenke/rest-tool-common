@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>JSON schema validator for the rest-tool-common library</p></div>
+            <div class="description"><p>JSON schema validator</p></div>
         
 
         
@@ -137,7 +137,7 @@
     
 
     
-    <h4 class="name" id=".validate"><span class="type-signature">(static) </span>validate<span class="signature">(content, schemaFileName)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    <h4 class="name" id=".validate"><span class="type-signature">(static) </span>validate<span class="signature">(content, schemaBasePath, schemaFileName)</span><span class="type-signature"> &rarr; {Array}</span></h4>
     
 
     
@@ -204,6 +204,29 @@
 
         <tr>
             
+                <td class="name"><code>schemaBasePath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The base path to the directory that contains the schema files</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>schemaFileName</code></td>
             
 
@@ -220,7 +243,7 @@
 
             
 
-            <td class="description last"><p>The name of the schema file</p></td>
+            <td class="description last"><p>The name of the schema file to validate by</p></td>
         </tr>
 
     
@@ -478,7 +501,7 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-extend.html">extend</a></li><li><a href="module-generator.html">generator</a></li><li><a href="module-schemas.html">schemas</a></li><li><a href="module-services.html">services</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-generator.html">generator</a></li><li><a href="module-schemas.html">schemas</a></li><li><a href="module-services.html">services</a></li></ul><h3>Global</h3><ul><li><a href="global.html#validateTestCase">validateTestCase</a></li></ul>
 </nav>
 
 <br class="clear">
