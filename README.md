@@ -10,6 +10,9 @@ This module is referred by the package.json files and automatically installed du
 of the 'rest-tool', so you probably will not use it directly unless you are willing to develop 
 your own code generator or templates.
 
+Read the [API documentation](https://tombenke.github.io/rest-tool-common/index.html)
+for further details on how to use this library.
+
 ## Further readings
 
 To learn more on how to setup the project, and how to use the tool visit the 
