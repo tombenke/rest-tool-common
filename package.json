@@ -1,7 +1,7 @@
 {
   "name": "rest-tool-common",
   "description": "A tool to document emulate and test RESTful APIs.",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "keywords": [
     "rest",
     "restful",
