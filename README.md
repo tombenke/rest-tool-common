@@ -1,4 +1,11 @@
-# Common modules for the rest-tool
+Common modules for the rest-tool
+================================
+
+[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+[![npm version][npm-badge]][npm-url]
+[![Build Status][travis-badge]][travis-url]
+[![Coveralls][BadgeCoveralls]][Coveralls]
+
 
 The 'rest-tool' is a simple Node.js command-line tool which can be used to document,
 emulate and test RESTful APIs. 
@@ -17,3 +24,11 @@ for further details on how to use this library.
 
 To learn more on how to setup the project, and how to use the tool visit the 
 [rest-tool project repository](https://github.com/tombenke/rest-tool) on GitHub.
+
+[npm-badge]: https://badge.fury.io/js/rest-tool-common.svg
+[npm-url]: https://badge.fury.io/js/rest-tool-common
+[travis-badge]: https://api.travis-ci.org/tombenke/rest-tool-common.svg
+[travis-url]: https://travis-ci.org/tombenke/rest-tool-common
+[Coveralls]: https://coveralls.io/github/tombenke/rest-tool-common?branch=master
+[BadgeCoveralls]: https://coveralls.io/repos/github/tombenke/rest-tool-common/badge.svg?branch=master
+
