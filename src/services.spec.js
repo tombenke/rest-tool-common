@@ -3,7 +3,6 @@
 
 const services = require('./index').services;
 const should = require('should')
-const _ = require('lodash')
 import {
     validate
 } from 'datafile'
@@ -69,27 +68,6 @@ describe('services', function() {
             if (validationErrors === 0) {
                 done()
             }
-        }
-    })
-
-    it('#getServices() - find all service descriptors', function(done) {
-
-        const endpoints = services.load("/home/tombenke/topics/wat/wat-ui/dist/rest-api", 'services')
-        //const endpoints = services.load(path.resolve(__dirname, 'fixtures'), 'services')
-        if (endpoints != null) {
-            const results = _.flatMap(endpoints, function(endpoint) {
-                const uri = endpoint.uriTemplate
-                const methods = endpoint.methodList
-                return _.map(methods, function(method) {
-                    return {
-                            method: method.methodName.toLowerCase(),
-                            uri: uri,
-                            endpointDesc: endpoint
-                        }
-                    }
-                )
-            })
-            done()
         }
     })
 
