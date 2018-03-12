@@ -335,7 +335,6 @@ exports.getMockResponseBody = function (method, serviceDesc, nameOfResponse) {
 var mkHeadersMap = function mkHeadersMap(headers) {
     return _.map(headers, function (headerDesc) {
         var rval = _defineProperty({}, headerDesc.field, headerDesc.content);
-        console.log(rval);
         return rval;
     });
 };

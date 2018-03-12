@@ -330,7 +330,6 @@ const mkHeadersMap = function(headers) {
         const rval = {
             [headerDesc.field]: headerDesc.content
         }
-        console.log(rval)
         return rval
     })
 }
