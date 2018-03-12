@@ -325,6 +325,74 @@ exports.getMockResponseBody = function(method, serviceDesc, nameOfResponse) {
     return getMockBody(serviceDesc, mockBody, contentType)
 }
 
+const mkHeadersMap = function(headers) {
+    return _.map(headers, function(headerDesc) {
+        const rval = {
+            [headerDesc.field]: headerDesc.content
+        }
+        console.log(rval)
+        return rval
+    })
+}
+
+/**
+ * Get the request headers of a given method of a service.
+ *
+ * @param  {String} method         - The name of the method, such as GET, PUT, etc.
+ * @param  {Object} serviceDesc    - The service descriptor object
+ * @return {String}                - The list of headers
+ */
+exports.getMockRequestHeaders = function(method, serviceDesc) {
+
+    if (_.hasIn(serviceDesc.methods, [method, 'request', 'headers']) &&
+        _.isArray(serviceDesc.methods[method].request.headers)) {
+        return mkHeadersMap(serviceDesc.methods[method].request.headers)
+    }
+    
+    return []
+}
+
+/**
+ * Find response descriptor of a given method of a service.
+ *
+ * @param  {String} method         - The name of the method, such as GET, PUT, etc.
+ * @param  {Object} serviceDesc    - The service descriptor object
+ * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
+ * @return {Object}                - The response descriptor object or `null` if not found
+ */
+const findResponseDesc = function(method, serviceDesc, nameOfResponse) {
+
+    if (_.hasIn(serviceDesc.methods, [method, 'responses']) &&
+        _.isArray(serviceDesc.methods[method].responses)) {
+        const respIdx = _.findIndex(serviceDesc.methods[method].responses, function(response) {
+            return (response.name === nameOfResponse)
+        })
+        if (respIdx >= 0) {
+            return serviceDesc.methods[method].responses[respIdx]
+        }
+    }
+
+    return null
+}
+
+/**
+ * Get the response headers of a given method of a service.
+ *
+ * @param  {String} method         - The name of the method, such as GET, PUT, etc.
+ * @param  {Object} serviceDesc    - The service descriptor object
+ * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
+ * @return {String}                - The content of the headers
+ */
+exports.getMockResponseHeaders = function(method, serviceDesc, nameOfResponse) {
+    const responseName = nameOfResponse || 'OK'
+
+    const response = findResponseDesc(method, serviceDesc, responseName)
+    if (! _.isNull(response) && _.has(response, 'headers') &&
+        _.isArray(response.headers)) {
+        return mkHeadersMap(response.headers)
+    }
+}
+
 /**
  * Get the services object, that holds the complete set of service descriptors.
  *

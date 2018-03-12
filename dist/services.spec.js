@@ -143,6 +143,40 @@ describe('services', function () {
         }
     });
 
+    it('#getMockRequestHeaders()', function (done) {
+
+        var expectedResult = [{
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+        }, {
+            "Accept-Encoding": "gzip, deflate"
+        }];
+
+        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = services.getServices();
+            allServices.should.be.instanceof(Object);
+            services.getMockRequestHeaders('GET', allServices['/customers/{id}']).should.be.eql(expectedResult);
+            done();
+        }
+    });
+
+    it('#getMockResponseHeaders()', function (done) {
+
+        var expectedResult = [{
+            "Content-Type": "application/json"
+        }, {
+            "X-Application-Version": "v0.4"
+        }, {
+            "X-Application-API-Version": "v0.1"
+        }];
+
+        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = services.getServices();
+            allServices.should.be.instanceof(Object);
+            services.getMockResponseHeaders('GET', allServices['/customers/{id}'], 'OK').should.be.eql(expectedResult);
+            done();
+        }
+    });
+
     it('#testDefaults()', function (done) {
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
