@@ -332,6 +332,12 @@ exports.getMockResponseBody = function (method, serviceDesc, nameOfResponse) {
     return getMockBody(serviceDesc, mockBody, contentType);
 };
 
+/**
+ * Make a headermap object of a headers descriptor array
+ *
+ * @param  {Array} headers         - The array of the header descriptor objects
+ * @return {Opject}                - The map of headers in the format it can hand over to express
+ */
 var mkHeadersMap = function mkHeadersMap(headers) {
     return _.map(headers, function (headerDesc) {
         var rval = _defineProperty({}, headerDesc.field, headerDesc.content);
