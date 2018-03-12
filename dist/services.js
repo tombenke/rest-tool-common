@@ -346,7 +346,7 @@ var mkHeadersMap = function mkHeadersMap(headers) {
  * @param  {Object} serviceDesc    - The service descriptor object
  * @return {String}                - The list of headers
  */
-exports.getMockRequestHeaders = function (method, serviceDesc) {
+exports.getRequestHeaders = function (method, serviceDesc) {
 
     if (_.hasIn(serviceDesc.methods, [method, 'request', 'headers']) && _.isArray(serviceDesc.methods[method].request.headers)) {
         return mkHeadersMap(serviceDesc.methods[method].request.headers);
@@ -385,7 +385,7 @@ var findResponseDesc = function findResponseDesc(method, serviceDesc, nameOfResp
  * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
  * @return {String}                - The content of the headers
  */
-exports.getMockResponseHeaders = function (method, serviceDesc, nameOfResponse) {
+exports.getResponseHeaders = function (method, serviceDesc, nameOfResponse) {
     var responseName = nameOfResponse || 'OK';
 
     var response = findResponseDesc(method, serviceDesc, responseName);

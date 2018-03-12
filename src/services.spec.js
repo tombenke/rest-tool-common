@@ -143,7 +143,7 @@ describe('services', function() {
         }
     })
 
-    it('#getMockRequestHeaders()', function(done) {
+    it('#getRequestHeaders()', function(done) {
 
         const expectedResult = [
             {
@@ -156,12 +156,12 @@ describe('services', function() {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
-            services.getMockRequestHeaders('GET', allServices['/customers/{id}']).should.be.eql(expectedResult)
+            services.getRequestHeaders('GET', allServices['/customers/{id}']).should.be.eql(expectedResult)
             done()
         }
     })
 
-    it('#getMockResponseHeaders()', function(done) {
+    it('#getResponseHeaders()', function(done) {
 
         const expectedResult = [
             {
@@ -176,7 +176,7 @@ describe('services', function() {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
-            services.getMockResponseHeaders('GET', allServices['/customers/{id}'], 'OK').should.be.eql(expectedResult)
+            services.getResponseHeaders('GET', allServices['/customers/{id}'], 'OK').should.be.eql(expectedResult)
             done()
         }
     })

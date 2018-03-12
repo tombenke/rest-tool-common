@@ -143,7 +143,7 @@ describe('services', function () {
         }
     });
 
-    it('#getMockRequestHeaders()', function (done) {
+    it('#getRequestHeaders()', function (done) {
 
         var expectedResult = [{
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
@@ -154,12 +154,12 @@ describe('services', function () {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getMockRequestHeaders('GET', allServices['/customers/{id}']).should.be.eql(expectedResult);
+            services.getRequestHeaders('GET', allServices['/customers/{id}']).should.be.eql(expectedResult);
             done();
         }
     });
 
-    it('#getMockResponseHeaders()', function (done) {
+    it('#getResponseHeaders()', function (done) {
 
         var expectedResult = [{
             "Content-Type": "application/json"
@@ -172,7 +172,7 @@ describe('services', function () {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getMockResponseHeaders('GET', allServices['/customers/{id}'], 'OK').should.be.eql(expectedResult);
+            services.getResponseHeaders('GET', allServices['/customers/{id}'], 'OK').should.be.eql(expectedResult);
             done();
         }
     });
