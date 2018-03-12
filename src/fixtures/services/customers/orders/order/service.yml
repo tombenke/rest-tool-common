@@ -1,0 +1,62 @@
+name: Orders service
+description: This is the description of the service to __order__ collection resources
+style: COLLECTION
+urlPattern: /customers/{customer}/orders
+methods:
+    GET:
+        summary: List _all_ the __orders__
+        notes: List all the orders
+        implementation: api.getOrders
+        request:
+            parameters: []
+            cookies: []
+            headers:
+                -
+                    field: Accept
+                    content: "application"
+                -
+                    field: Accept-Encoding
+                    content: "gzip, deflate"
+        responses:
+            -
+                name: OK
+                statusCode: &OkStatusCode 200
+                reason: &OkReason Successful execution
+                # validationSchema: getOrders-responseBody-validationSchema.json
+                cookies: []
+                headers:
+                    -
+                        field: Content-Type
+                        content: application/json
+                    -
+                        field: X-Application-Version
+                        content: v0.4 # This value must be parametric
+                    -
+                        field: X-Application-API-Version
+                        content: v0.1 # This value must be parametric
+                mockBody: getOrders-responseBody.json
+        testCases:
+            -
+                name: Get Orders
+                description: Successfully retrieves all the orders
+                url: /customers/1234/orders
+                template: testGetMethod.mustache
+                request:
+                    cookies: []
+                    headers:
+                        -
+                            field : "Accept"
+                            content: "application/json"
+                        -
+                            field: "Accept-Encoding"
+                            content: "gzip, deflate"
+                response:
+                    name: OK
+                    statusCode: *OkStatusCode
+                    reason: *OkReason
+                    cookies: []
+                    headers:
+                        -
+                            field: "Content-Type"
+                            content: "application/json"
+

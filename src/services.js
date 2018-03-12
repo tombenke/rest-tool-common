@@ -50,7 +50,7 @@ const mapOwnProperties = function(obj, func) {
  */
 exports.load = (restapiRoot, servicesRoot='services') => {
     const fullServicesRoot = path.resolve(restapiRoot, servicesRoot)
-    const servicesToLoad = _.map(findFilesSync(fullServicesRoot, /^service\.yml$/), servicePath =>
+    const servicesToLoad = _.map(findFilesSync(fullServicesRoot, /.*service\.yml$/), servicePath =>
         servicePath.replace(fullServicesRoot, '').replace('/service.yml', ''))
 
     return loadServices(restapiRoot, servicesRoot, servicesToLoad)
@@ -189,7 +189,7 @@ const setDefaults = function(serviceDescriptor) {
  * @arg {Object} servicesToLoad -
  */
 const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
-    const path = require('path' )
+    const path = require('path')
 
     const baseFolder = path.resolve(restapiRoot, servicesRoot)
 
@@ -199,13 +199,13 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
 
         // Load the YAML format service descriptor
         // console.log('Loading ' + serviceDescriptorFileName)
-        let serviceDescriptor = loadJsonFileSync(serviceDescriptorFileName) //require( serviceDescriptorFileName )
+        let serviceDescriptor = loadJsonFileSync(serviceDescriptorFileName, true)
 
         setAliases(serviceDescriptor)
 
         // Validate the service description
         let err = validate(serviceDescriptor, schemaBasePath, 'serviceSchema.yml')
-        if (err.length == 0 ) {
+        if (err.length == 0) {
             setDefaults(serviceDescriptor)
             updateMethodLists(serviceDescriptor)
 
@@ -214,6 +214,8 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
             serviceDescriptor.restapiRoot = restapiRoot
             serviceDescriptor.contentPath = servicesRoot + servicePath
             services[serviceDescriptor.uriTemplate] = serviceDescriptor
+        } else {
+            throw (err)
         }
     })
     return services

@@ -59,7 +59,7 @@ exports.load = function (restapiRoot) {
     var servicesRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'services';
 
     var fullServicesRoot = _path2.default.resolve(restapiRoot, servicesRoot);
-    var servicesToLoad = _.map((0, _datafile.findFilesSync)(fullServicesRoot, /^service\.yml$/), function (servicePath) {
+    var servicesToLoad = _.map((0, _datafile.findFilesSync)(fullServicesRoot, /.*service\.yml$/), function (servicePath) {
         return servicePath.replace(fullServicesRoot, '').replace('/service.yml', '');
     });
 
@@ -209,7 +209,7 @@ var loadServices = function loadServices(restapiRoot, servicesRoot, servicesToLo
 
         // Load the YAML format service descriptor
         // console.log('Loading ' + serviceDescriptorFileName)
-        var serviceDescriptor = (0, _datafile.loadJsonFileSync)(serviceDescriptorFileName); //require( serviceDescriptorFileName )
+        var serviceDescriptor = (0, _datafile.loadJsonFileSync)(serviceDescriptorFileName, true);
 
         setAliases(serviceDescriptor);
 
@@ -224,6 +224,8 @@ var loadServices = function loadServices(restapiRoot, servicesRoot, servicesToLo
             serviceDescriptor.restapiRoot = restapiRoot;
             serviceDescriptor.contentPath = servicesRoot + servicePath;
             services[serviceDescriptor.uriTemplate] = serviceDescriptor;
+        } else {
+            throw err;
         }
     });
     return services;

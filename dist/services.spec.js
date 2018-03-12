@@ -5,6 +5,7 @@ var _datafile = require('datafile');
 
 var services = require('./index').services;
 var should = require('should');
+var _ = require('lodash');
 
 var path = require('path');
 var schemaBasePath = __dirname + '/../schemas/';
@@ -23,7 +24,7 @@ var validateTestCase = function validateTestCase(testCase) {
     testCase.service.should.have.property('description');
     testCase.service.should.have.property('uriTemplate');
     testCase.service.should.have.property('style');
-    testCase.service.style.should.match(/OPERATION|RESOURCE/);
+    testCase.service.style.should.match(/OPERATION|RESOURCE|COLLECTION/);
 
     // Validate method
     testCase.should.have.property('method');
@@ -53,7 +54,7 @@ describe('services', function () {
         }
     });
 
-    it('#getServices()', function (done) {
+    it('#getServices() - service descriptors are valid', function (done) {
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
@@ -68,6 +69,26 @@ describe('services', function () {
             if (validationErrors === 0) {
                 done();
             }
+        }
+    });
+
+    it('#getServices() - find all service descriptors', function (done) {
+
+        var endpoints = services.load("/home/tombenke/topics/wat/wat-ui/dist/rest-api", 'services');
+        //const endpoints = services.load(path.resolve(__dirname, 'fixtures'), 'services')
+        if (endpoints != null) {
+            var results = _.flatMap(endpoints, function (endpoint) {
+                var uri = endpoint.uriTemplate;
+                var methods = endpoint.methodList;
+                return _.map(methods, function (method) {
+                    return {
+                        method: method.methodName.toLowerCase(),
+                        uri: uri,
+                        endpointDesc: endpoint
+                    };
+                });
+            });
+            done();
         }
     });
 
