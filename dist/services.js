@@ -295,13 +295,14 @@ var getMockBody = function getMockBody(serviceDesc, mockBodyPath, contentType) {
  * @return {String}              The content of the mock body
  */
 exports.getMockRequestBody = function (method, serviceDesc) {
+    var capsMethod = method.toUpperCase();
     var mockBody = '';
     var contentType = 'application/json';
-    var requestMockBody = serviceDesc.methods[method].request.mockBody;
+    var requestMockBody = serviceDesc.methods[capsMethod].request.mockBody;
 
     if (typeof requestMockBody != 'undefined' && requestMockBody !== null) {
         mockBody = requestMockBody;
-        contentType = findHeaderValue(serviceDesc.methods[method].request.headers, 'Content-Type');
+        contentType = findHeaderValue(serviceDesc.methods[capsMethod].request.headers, 'Content-Type');
     }
 
     return getMockBody(serviceDesc, mockBody, contentType);
@@ -318,11 +319,12 @@ exports.getMockRequestBody = function (method, serviceDesc) {
  * @return {String}                - The content of the mock body
  */
 exports.getMockResponseBody = function (method, serviceDesc, nameOfResponse) {
+    var capsMethod = method.toUpperCase();
     var responseName = nameOfResponse || 'OK';
     var mockBody = '';
     var contentType = 'application/json';
 
-    serviceDesc.methods[method].responses.forEach(function (response) {
+    serviceDesc.methods[capsMethod].responses.forEach(function (response) {
         if (response.name === responseName && typeof response.mockBody != 'undefined' && response.mockBody !== null) {
             mockBody = response.mockBody;
             contentType = findHeaderValue(response.headers, 'Content-Type');
