@@ -348,8 +348,9 @@ var mkHeadersMap = function mkHeadersMap(headers) {
  */
 exports.getRequestHeaders = function (method, serviceDesc) {
 
-    if (_.hasIn(serviceDesc.methods, [method, 'request', 'headers']) && _.isArray(serviceDesc.methods[method].request.headers)) {
-        return mkHeadersMap(serviceDesc.methods[method].request.headers);
+    var capsMethod = method.toUpperCase();
+    if (_.hasIn(serviceDesc.methods, [capsMethod, 'request', 'headers']) && _.isArray(serviceDesc.methods[capsMethod].request.headers)) {
+        return mkHeadersMap(serviceDesc.methods[capsMethod].request.headers);
     }
 
     return [];
@@ -365,12 +366,13 @@ exports.getRequestHeaders = function (method, serviceDesc) {
  */
 var findResponseDesc = function findResponseDesc(method, serviceDesc, nameOfResponse) {
 
-    if (_.hasIn(serviceDesc.methods, [method, 'responses']) && _.isArray(serviceDesc.methods[method].responses)) {
-        var respIdx = _.findIndex(serviceDesc.methods[method].responses, function (response) {
+    var capsMethod = method.toUpperCase();
+    if (_.hasIn(serviceDesc.methods, [capsMethod, 'responses']) && _.isArray(serviceDesc.methods[capsMethod].responses)) {
+        var respIdx = _.findIndex(serviceDesc.methods[capsMethod].responses, function (response) {
             return response.name === nameOfResponse;
         });
         if (respIdx >= 0) {
-            return serviceDesc.methods[method].responses[respIdx];
+            return serviceDesc.methods[capsMethod].responses[respIdx];
         }
     }
 

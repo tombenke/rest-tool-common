@@ -343,9 +343,10 @@ const mkHeadersMap = function(headers) {
  */
 exports.getRequestHeaders = function(method, serviceDesc) {
 
-    if (_.hasIn(serviceDesc.methods, [method, 'request', 'headers']) &&
-        _.isArray(serviceDesc.methods[method].request.headers)) {
-        return mkHeadersMap(serviceDesc.methods[method].request.headers)
+    const capsMethod = method.toUpperCase()
+    if (_.hasIn(serviceDesc.methods, [capsMethod, 'request', 'headers']) &&
+        _.isArray(serviceDesc.methods[capsMethod].request.headers)) {
+        return mkHeadersMap(serviceDesc.methods[capsMethod].request.headers)
     }
     
     return []
@@ -361,13 +362,14 @@ exports.getRequestHeaders = function(method, serviceDesc) {
  */
 const findResponseDesc = function(method, serviceDesc, nameOfResponse) {
 
-    if (_.hasIn(serviceDesc.methods, [method, 'responses']) &&
-        _.isArray(serviceDesc.methods[method].responses)) {
-        const respIdx = _.findIndex(serviceDesc.methods[method].responses, function(response) {
+    const capsMethod = method.toUpperCase()
+    if (_.hasIn(serviceDesc.methods, [capsMethod, 'responses']) &&
+        _.isArray(serviceDesc.methods[capsMethod].responses)) {
+        const respIdx = _.findIndex(serviceDesc.methods[capsMethod].responses, function(response) {
             return (response.name === nameOfResponse)
         })
         if (respIdx >= 0) {
-            return serviceDesc.methods[method].responses[respIdx]
+            return serviceDesc.methods[capsMethod].responses[respIdx]
         }
     }
 

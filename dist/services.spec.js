@@ -154,7 +154,7 @@ describe('services', function () {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getRequestHeaders('GET', allServices['/customers/{id}']).should.be.eql(expectedResult);
+            services.getRequestHeaders('get', allServices['/customers/{id}']).should.be.eql(expectedResult);
             done();
         }
     });
