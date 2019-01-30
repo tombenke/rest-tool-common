@@ -240,6 +240,18 @@ const findHeaderValue = function (headers, field) {
 }
 
 /**
+ * Get the implementation of a method of a service endpoint
+ *
+ * @param  {Object} serviceDesc  - The service descriptor object
+ * @param  {String} method - The name of the method
+ *
+ * @return {String} - The content of the implementation property
+ */
+exports.getImplementation = function(serviceDesc, method) {
+    return serviceDesc.methods[method.toUpperCase()].implementation || null
+}
+
+/**
  * Get the mock content body of a service.
  *
  * @param  {Object} serviceDesc  - The service descriptor object
