@@ -143,6 +143,16 @@ describe('services', function () {
         }
     });
 
+    it('#getImplementation()', function (done) {
+
+        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = services.getServices();
+            allServices.should.be.instanceof(Object);
+            services.getImplementation(allServices['/customers'], 'get').should.be.equal("api.getCustomers");
+            done();
+        }
+    });
+
     it('#getRequestHeaders()', function (done) {
 
         var expectedResult = [{
