@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*jshint node: true */
-'use strict';
+'use strict'
 
 /**
  * A module that loads and provides the service endpoint descriptors
@@ -10,12 +10,7 @@
 
 import path from 'path'
 import * as _ from 'lodash'
-import {
-    validate,
-    findFilesSync,
-    loadJsonFileSync,
-    loadTextFileSync
-} from 'datafile'
+import { validate, findFilesSync, loadJsonFileSync, loadTextFileSync } from 'datafile'
 //const schemas = require('/schemas/')
 const schemaBasePath = __dirname + '/../schemas/'
 
@@ -48,10 +43,11 @@ const mapOwnProperties = function(obj, func) {
  *
  * @function
  */
-exports.load = (restapiRoot, servicesRoot='services') => {
+exports.load = (restapiRoot, servicesRoot = 'services') => {
     const fullServicesRoot = path.resolve(restapiRoot, servicesRoot)
     const servicesToLoad = _.map(findFilesSync(fullServicesRoot, /.*service\.yml$/), servicePath =>
-        servicePath.replace(fullServicesRoot, '').replace('/service.yml', ''))
+        servicePath.replace(fullServicesRoot, '').replace('/service.yml', '')
+    )
 
     return loadServices(restapiRoot, servicesRoot, servicesToLoad)
 }
@@ -143,12 +139,11 @@ const setDefault = function(object, property, defaultValue) {
  * @arg {Object} serviceDescriptor - The service descriptor object
  */
 const setDefaults = function(serviceDescriptor) {
-
     setDefault(serviceDescriptor, 'style', 'OPERATION')
 
     mapOwnProperties(serviceDescriptor.methods, function(method, methodName) {
         let sdMethod = serviceDescriptor.methods[methodName]
-        setDefault( sdMethod, 'testCases', [])
+        setDefault(sdMethod, 'testCases', [])
         sdMethod.testCases.forEach(function(testCase) {
             setDefault(testCase, 'request', {
                 cookies: [],
@@ -194,7 +189,7 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
     const baseFolder = path.resolve(restapiRoot, servicesRoot)
 
     // serviceFolders
-    servicesToLoad.forEach(function (servicePath) {
+    servicesToLoad.forEach(function(servicePath) {
         let serviceDescriptorFileName = baseFolder + servicePath + '/service.yml'
 
         // Load the YAML format service descriptor
@@ -215,7 +210,7 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
             serviceDescriptor.contentPath = servicesRoot + servicePath
             services[serviceDescriptor.uriTemplate] = serviceDescriptor
         } else {
-            throw (err)
+            throw err
         }
     })
     return services
@@ -229,7 +224,7 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
  *
  * @return {String} - The value of the header field
  */
-const findHeaderValue = function (headers, field) {
+const findHeaderValue = function(headers, field) {
     let content = null
     headers.forEach(function(header) {
         if (header.field.toLowerCase() === field.toLowerCase()) {
@@ -269,12 +264,10 @@ const getMockBody = function(serviceDesc, mockBodyPath, contentType) {
     //console.log('mockBody: ' + mockBody + ' contentType: ' + contentType)
     if (mockBodyPath !== '') {
         mockBodyPath = serviceDesc.restapiRoot + '/' + serviceDesc.contentPath + '/' + mockBodyPath
-        if(contentType === 'application/json') {
+        if (contentType === 'application/json') {
             mockBodyContent = loadJsonFileSync(mockBodyPath)
         } else {
-            if( contentType === 'text/plain' ||
-                contentType === 'text/html' ||
-                contentType === 'text/xml') {
+            if (contentType === 'text/plain' || contentType === 'text/html' || contentType === 'text/xml') {
                 //mockBodyContent = loadFile(mockBodyPath, 'utf-8')
                 mockBodyContent = loadTextFileSync(mockBodyPath, 'utf-8')
             } else {
@@ -302,12 +295,11 @@ exports.getMockRequestBody = function(method, serviceDesc) {
     let contentType = 'application/json'
     let requestMockBody = serviceDesc.methods[capsMethod].request.mockBody
 
-    if (typeof requestMockBody != 'undefined' &&
-        requestMockBody !== null) {
+    if (typeof requestMockBody != 'undefined' && requestMockBody !== null) {
         mockBody = requestMockBody
         contentType = findHeaderValue(serviceDesc.methods[capsMethod].request.headers, 'Content-Type')
     }
-    
+
     return getMockBody(serviceDesc, mockBody, contentType)
 }
 
@@ -328,14 +320,12 @@ exports.getMockResponseBody = function(method, serviceDesc, nameOfResponse) {
     let contentType = 'application/json'
 
     serviceDesc.methods[capsMethod].responses.forEach(function(response) {
-        if (response.name === responseName &&
-            typeof response.mockBody != 'undefined' &&
-            response.mockBody !== null) {
+        if (response.name === responseName && typeof response.mockBody != 'undefined' && response.mockBody !== null) {
             mockBody = response.mockBody
             contentType = findHeaderValue(response.headers, 'Content-Type')
         }
     })
-    
+
     return getMockBody(serviceDesc, mockBody, contentType)
 }
 
@@ -362,13 +352,14 @@ const mkHeadersMap = function(headers) {
  * @return {String}                - The list of headers
  */
 exports.getRequestHeaders = function(method, serviceDesc) {
-
     const capsMethod = method.toUpperCase()
-    if (_.hasIn(serviceDesc.methods, [capsMethod, 'request', 'headers']) &&
-        _.isArray(serviceDesc.methods[capsMethod].request.headers)) {
+    if (
+        _.hasIn(serviceDesc.methods, [capsMethod, 'request', 'headers']) &&
+        _.isArray(serviceDesc.methods[capsMethod].request.headers)
+    ) {
         return mkHeadersMap(serviceDesc.methods[capsMethod].request.headers)
     }
-    
+
     return []
 }
 
@@ -381,12 +372,13 @@ exports.getRequestHeaders = function(method, serviceDesc) {
  * @return {Object}                - The response descriptor object or `null` if not found
  */
 const findResponseDesc = function(method, serviceDesc, nameOfResponse) {
-
     const capsMethod = method.toUpperCase()
-    if (_.hasIn(serviceDesc.methods, [capsMethod, 'responses']) &&
-        _.isArray(serviceDesc.methods[capsMethod].responses)) {
+    if (
+        _.hasIn(serviceDesc.methods, [capsMethod, 'responses']) &&
+        _.isArray(serviceDesc.methods[capsMethod].responses)
+    ) {
         const respIdx = _.findIndex(serviceDesc.methods[capsMethod].responses, function(response) {
-            return (response.name === nameOfResponse)
+            return response.name === nameOfResponse
         })
         if (respIdx >= 0) {
             return serviceDesc.methods[capsMethod].responses[respIdx]
@@ -408,8 +400,7 @@ exports.getResponseHeaders = function(method, serviceDesc, nameOfResponse) {
     const responseName = nameOfResponse || 'OK'
 
     const response = findResponseDesc(method, serviceDesc, responseName)
-    if (! _.isNull(response) && _.has(response, 'headers') &&
-        _.isArray(response.headers)) {
+    if (!_.isNull(response) && _.has(response, 'headers') && _.isArray(response.headers)) {
         return mkHeadersMap(response.headers)
     }
 }
@@ -419,7 +410,7 @@ exports.getResponseHeaders = function(method, serviceDesc, nameOfResponse) {
  *
  * @return {Object} - The list of services, where the keys of the object are the URI patterns.
  */
-exports.getServices = function () {
+exports.getServices = function() {
     return services
 }
 
@@ -428,15 +419,15 @@ exports.getServices = function () {
  *
  * @return {Array} - The array of test case descriptor objects
  */
-exports.getAllTestCases = function () {
+exports.getAllTestCases = function() {
     let testCases = []
 
     for (let service in services) {
         if (services.hasOwnProperty(service)) {
             // console.log('get test cases of ' + service)
             let serviceDesc = services[service]
-            for (let method in serviceDesc.methods ) {
-                if ( serviceDesc.methods.hasOwnProperty(method) ) {
+            for (let method in serviceDesc.methods) {
+                if (serviceDesc.methods.hasOwnProperty(method)) {
                     let methodDesc = serviceDesc.methods[method]
                     methodDesc.testCases.forEach(function(testCaseDesc) {
                         testCases.push({

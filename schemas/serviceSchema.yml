@@ -26,7 +26,7 @@ definitions:
                     Tells whether it is an RPC-like OPERATION,
                     or a RESOURCE, which fully comply to the REST principles
                 type: [string, "null"]
-                enum: [OPERATION, COLLECTION, RESOURCE]
+                enum: [OPERATION, COLLECTION, RESOURCE, STATIC]
             methods:
                 $ref: "#/definitions/methods"
 

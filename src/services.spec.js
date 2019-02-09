@@ -1,11 +1,9 @@
 /*jshint node: true */
-'use strict';
+'use strict'
 
-const services = require('./index').services;
+const services = require('./index').services
 const should = require('should')
-import {
-    validate
-} from 'datafile'
+import { validate } from 'datafile'
 const path = require('path')
 const schemaBasePath = __dirname + '/../schemas/'
 
@@ -14,8 +12,7 @@ const schemaBasePath = __dirname + '/../schemas/'
  * @param  {Object} testCase  The testCase object to validate
  * @return {Boolean}          true if successfully validated, false otherwise
  */
-const validateTestCase = function (testCase) {
-
+const validateTestCase = function(testCase) {
     // Validate service
     testCase.should.have.property('service')
     testCase.service.should.be.instanceof(Object)
@@ -38,23 +35,19 @@ const validateTestCase = function (testCase) {
 }
 
 describe('services', function() {
-
     it('#load() - with default services path', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             done()
         }
     })
 
     it('#load() - with explicit services path', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures')) != null) {
             done()
         }
     })
 
     it('#getServices() - service descriptors are valid', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             let allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -72,7 +65,6 @@ describe('services', function() {
     })
 
     it('#getAllTestCases()', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allTestCases = services.getAllTestCases()
 
@@ -87,7 +79,6 @@ describe('services', function() {
     })
 
     it('#testNoTestCases()', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             const allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -118,11 +109,10 @@ describe('services', function() {
     })
 
     it('#getMockRequestBody()', function(done) {
-
         const expectedResult = {
-            "id": 1,
-            "name": "John Doe",
-            "tags": ["picky"]
+            id: 1,
+            name: 'John Doe',
+            tags: ['picky']
         }
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
@@ -134,32 +124,32 @@ describe('services', function() {
     })
 
     it('#getMockResponseBody()', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
-            services.getMockResponseBody('GET', allServices['/monitoring/isAlive'], 'OK').should.be.equal("The service is alive\n")
+            services
+                .getMockResponseBody('GET', allServices['/monitoring/isAlive'], 'OK')
+                .should.be.equal('The service is alive\n')
             done()
         }
     })
 
     it('#getImplementation()', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
-            services.getImplementation(allServices['/customers'], 'get').should.be.equal("api.getCustomers")
+            services.getImplementation(allServices['/customers'], 'get').should.be.equal('api.getCustomers')
             done()
         }
     })
 
     it('#getRequestHeaders()', function(done) {
-
         const expectedResult = [
             {
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            }, {
-                "Accept-Encoding": "gzip, deflate"
+                Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            },
+            {
+                'Accept-Encoding': 'gzip, deflate'
             }
         ]
 
@@ -172,14 +162,15 @@ describe('services', function() {
     })
 
     it('#getResponseHeaders()', function(done) {
-
         const expectedResult = [
             {
-                "Content-Type": "application/json"
-            }, {
-                "X-Application-Version": "v0.4"
-            }, {
-                "X-Application-API-Version": "v0.1"
+                'Content-Type': 'application/json'
+            },
+            {
+                'X-Application-Version': 'v0.4'
+            },
+            {
+                'X-Application-API-Version': 'v0.1'
             }
         ]
 
@@ -192,7 +183,6 @@ describe('services', function() {
     })
 
     it('#testDefaults()', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -239,7 +229,6 @@ describe('services', function() {
     })
 
     it('#testAliases()', function(done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             const allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -261,5 +250,4 @@ describe('services', function() {
             done()
         }
     })
-
 })

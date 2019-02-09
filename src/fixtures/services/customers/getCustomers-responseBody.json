@@ -1,4 +1,1 @@
-[
-    {"id": 1, "name": "John Doe", "tags": ["picky"]},
-    {"id": 2, "name": "Jean Doe", "tags": ["nice", "sexy"]}
-]
+[{ "id": 1, "name": "John Doe", "tags": ["picky"] }, { "id": 2, "name": "Jean Doe", "tags": ["nice", "sexy"] }]
