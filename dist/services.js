@@ -155,7 +155,6 @@ var setDefault = function setDefault(object, property, defaultValue) {
  * @arg {Object} serviceDescriptor - The service descriptor object
  */
 var setDefaults = function setDefaults(serviceDescriptor) {
-
     setDefault(serviceDescriptor, 'style', 'OPERATION');
 
     mapOwnProperties(serviceDescriptor.methods, function (method, methodName) {
@@ -367,7 +366,6 @@ var mkHeadersMap = function mkHeadersMap(headers) {
  * @return {String}                - The list of headers
  */
 exports.getRequestHeaders = function (method, serviceDesc) {
-
     var capsMethod = method.toUpperCase();
     if (_.hasIn(serviceDesc.methods, [capsMethod, 'request', 'headers']) && _.isArray(serviceDesc.methods[capsMethod].request.headers)) {
         return mkHeadersMap(serviceDesc.methods[capsMethod].request.headers);
@@ -385,7 +383,6 @@ exports.getRequestHeaders = function (method, serviceDesc) {
  * @return {Object}                - The response descriptor object or `null` if not found
  */
 var findResponseDesc = function findResponseDesc(method, serviceDesc, nameOfResponse) {
-
     var capsMethod = method.toUpperCase();
     if (_.hasIn(serviceDesc.methods, [capsMethod, 'responses']) && _.isArray(serviceDesc.methods[capsMethod].responses)) {
         var respIdx = _.findIndex(serviceDesc.methods[capsMethod].responses, function (response) {

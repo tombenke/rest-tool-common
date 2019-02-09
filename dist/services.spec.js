@@ -15,7 +15,6 @@ var schemaBasePath = __dirname + '/../schemas/';
  * @return {Boolean}          true if successfully validated, false otherwise
  */
 var validateTestCase = function validateTestCase(testCase) {
-
     // Validate service
     testCase.should.have.property('service');
     testCase.service.should.be.instanceof(Object);
@@ -38,23 +37,19 @@ var validateTestCase = function validateTestCase(testCase) {
 };
 
 describe('services', function () {
-
     it('#load() - with default services path', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             done();
         }
     });
 
     it('#load() - with explicit services path', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures')) != null) {
             done();
         }
     });
 
     it('#getServices() - service descriptors are valid', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
@@ -72,7 +67,6 @@ describe('services', function () {
     });
 
     it('#getAllTestCases()', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allTestCases = services.getAllTestCases();
 
@@ -87,7 +81,6 @@ describe('services', function () {
     });
 
     it('#testNoTestCases()', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
@@ -118,11 +111,10 @@ describe('services', function () {
     });
 
     it('#getMockRequestBody()', function (done) {
-
         var expectedResult = {
-            "id": 1,
-            "name": "John Doe",
-            "tags": ["picky"]
+            id: 1,
+            name: 'John Doe',
+            tags: ['picky']
         };
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
@@ -134,31 +126,28 @@ describe('services', function () {
     });
 
     it('#getMockResponseBody()', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getMockResponseBody('GET', allServices['/monitoring/isAlive'], 'OK').should.be.equal("The service is alive\n");
+            services.getMockResponseBody('GET', allServices['/monitoring/isAlive'], 'OK').should.be.equal('The service is alive\n');
             done();
         }
     });
 
     it('#getImplementation()', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getImplementation(allServices['/customers'], 'get').should.be.equal("api.getCustomers");
+            services.getImplementation(allServices['/customers'], 'get').should.be.equal('api.getCustomers');
             done();
         }
     });
 
     it('#getRequestHeaders()', function (done) {
-
         var expectedResult = [{
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
         }, {
-            "Accept-Encoding": "gzip, deflate"
+            'Accept-Encoding': 'gzip, deflate'
         }];
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
@@ -170,13 +159,12 @@ describe('services', function () {
     });
 
     it('#getResponseHeaders()', function (done) {
-
         var expectedResult = [{
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         }, {
-            "X-Application-Version": "v0.4"
+            'X-Application-Version': 'v0.4'
         }, {
-            "X-Application-API-Version": "v0.1"
+            'X-Application-API-Version': 'v0.1'
         }];
 
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
@@ -188,7 +176,6 @@ describe('services', function () {
     });
 
     it('#testDefaults()', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
@@ -235,7 +222,6 @@ describe('services', function () {
     });
 
     it('#testAliases()', function (done) {
-
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices();
             allServices.should.be.instanceof(Object);
