@@ -69,7 +69,6 @@ var load = exports.load = function load(restapiRoot) {
     } //.replace('/endpoint.yml', '')
     ));
 
-    console.log('servicesToLoad: ', restapiRoot, servicesRoot, servicesToLoad);
     return loadServices(restapiRoot, servicesRoot, servicesToLoad);
 };
 
