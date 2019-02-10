@@ -424,20 +424,19 @@ export const getServices = function() {
  * @return {Array} - The array of static endpoint descriptors
  */
 export const getAllStaticEndpoints = () =>
-    _.map(_.filter(services, serviceDesc => _.get(serviceDesc, "methods.GET.static", null) !== null),
-        ssDesc => {
-            const ssConfig = _.get(ssDesc, 'methods.GET.static', {
-                contentPath: '',
-                config: {}
-            })
-            return {
-                name: ssDesc.name || '',
-                description: ssDesc.description || '',
-                uriTemplate: ssDesc.uriTemplate,
-                contentPath: ssConfig.contentPath,
-                config: ssConfig.config
-            }
+    _.map(_.filter(services, serviceDesc => _.get(serviceDesc, 'methods.GET.static', null) !== null), ssDesc => {
+        const ssConfig = _.get(ssDesc, 'methods.GET.static', {
+            contentPath: '',
+            config: {}
         })
+        return {
+            name: ssDesc.name || '',
+            description: ssDesc.description || '',
+            uriTemplate: ssDesc.uriTemplate,
+            contentPath: ssConfig.contentPath,
+            config: ssConfig.config
+        }
+    })
 
 /**
  * Get all test cases

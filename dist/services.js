@@ -434,7 +434,7 @@ var getServices = exports.getServices = function getServices() {
  */
 var getAllStaticEndpoints = exports.getAllStaticEndpoints = function getAllStaticEndpoints() {
     return _.map(_.filter(services, function (serviceDesc) {
-        return serviceDesc.style === 'STATIC';
+        return _.get(serviceDesc, 'methods.GET.static', null) !== null;
     }), function (ssDesc) {
         var ssConfig = _.get(ssDesc, 'methods.GET.static', {
             contentPath: '',
