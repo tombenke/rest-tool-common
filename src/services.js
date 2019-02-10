@@ -1,7 +1,3 @@
-#!/usr/bin/env node
-/*jshint node: true */
-'use strict'
-
 /**
  * A module that loads and provides the service endpoint descriptors
  *
@@ -43,12 +39,18 @@ const mapOwnProperties = function(obj, func) {
  *
  * @function
  */
-exports.load = (restapiRoot, servicesRoot = 'services') => {
+export const load = (restapiRoot, servicesRoot = '') => {
     const fullServicesRoot = path.resolve(restapiRoot, servicesRoot)
-    const servicesToLoad = _.map(findFilesSync(fullServicesRoot, /.*service\.yml$/), servicePath =>
-        servicePath.replace(fullServicesRoot, '').replace('/service.yml', '')
+    const servicesToLoad = _.concat(
+        _.map(findFilesSync(fullServicesRoot, /.*service\.yml$/), servicePath =>
+            servicePath.replace(fullServicesRoot, '')//.replace('/service.yml', '')
+        ),
+        _.map(findFilesSync(fullServicesRoot, /.*endpoint\.yml$/), servicePath =>
+            servicePath.replace(fullServicesRoot, '')//.replace('/endpoint.yml', '')
+        )
     )
 
+    console.log('servicesToLoad: ', restapiRoot, servicesRoot, servicesToLoad)
     return loadServices(restapiRoot, servicesRoot, servicesToLoad)
 }
 
@@ -190,7 +192,7 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
 
     // serviceFolders
     servicesToLoad.forEach(function(servicePath) {
-        let serviceDescriptorFileName = baseFolder + servicePath + '/service.yml'
+        let serviceDescriptorFileName = baseFolder + servicePath // + '/service.yml'
 
         // Load the YAML format service descriptor
         // console.log('Loading ' + serviceDescriptorFileName)
@@ -207,7 +209,7 @@ const loadServices = function(restapiRoot, servicesRoot, servicesToLoad) {
             // Set service description to services map
             // console.log(serviceDescriptorFileName + 'service is loaded.\n')
             serviceDescriptor.restapiRoot = restapiRoot
-            serviceDescriptor.contentPath = servicesRoot + servicePath
+            serviceDescriptor.contentPath = servicesRoot + servicePath.replace(/service\.yml|endpoint\.yml/, '')
             services[serviceDescriptor.uriTemplate] = serviceDescriptor
         } else {
             throw err
@@ -242,7 +244,7 @@ const findHeaderValue = function(headers, field) {
  *
  * @return {String} - The content of the implementation property
  */
-exports.getImplementation = function(serviceDesc, method) {
+export const getImplementation = function(serviceDesc, method) {
     return serviceDesc.methods[method.toUpperCase()].implementation || null
 }
 
@@ -289,7 +291,7 @@ const getMockBody = function(serviceDesc, mockBodyPath, contentType) {
  *
  * @return {String}              The content of the mock body
  */
-exports.getMockRequestBody = function(method, serviceDesc) {
+export const getMockRequestBody = function(method, serviceDesc) {
     const capsMethod = method.toUpperCase()
     let mockBody = ''
     let contentType = 'application/json'
@@ -313,7 +315,7 @@ exports.getMockRequestBody = function(method, serviceDesc) {
  * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
  * @return {String}                - The content of the mock body
  */
-exports.getMockResponseBody = function(method, serviceDesc, nameOfResponse) {
+export const getMockResponseBody = function(method, serviceDesc, nameOfResponse) {
     const capsMethod = method.toUpperCase()
     const responseName = nameOfResponse || 'OK'
     let mockBody = ''
@@ -351,7 +353,7 @@ const mkHeadersMap = function(headers) {
  * @param  {Object} serviceDesc    - The service descriptor object
  * @return {String}                - The list of headers
  */
-exports.getRequestHeaders = function(method, serviceDesc) {
+export const getRequestHeaders = function(method, serviceDesc) {
     const capsMethod = method.toUpperCase()
     if (
         _.hasIn(serviceDesc.methods, [capsMethod, 'request', 'headers']) &&
@@ -396,7 +398,7 @@ const findResponseDesc = function(method, serviceDesc, nameOfResponse) {
  * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
  * @return {String}                - The content of the headers
  */
-exports.getResponseHeaders = function(method, serviceDesc, nameOfResponse) {
+export const getResponseHeaders = function(method, serviceDesc, nameOfResponse) {
     const responseName = nameOfResponse || 'OK'
 
     const response = findResponseDesc(method, serviceDesc, responseName)
@@ -410,16 +412,36 @@ exports.getResponseHeaders = function(method, serviceDesc, nameOfResponse) {
  *
  * @return {Object} - The list of services, where the keys of the object are the URI patterns.
  */
-exports.getServices = function() {
+export const getServices = function() {
     return services
 }
+
+/**
+ * Get all static endpoints
+ *
+ * @return {Array} - The array of static endpoint descriptors
+ */
+export const getAllStaticEndpoints = () =>
+    _.map(_.filter(services, serviceDesc => serviceDesc.style === 'STATIC'), (ssDesc) => {
+        const ssConfig = _.get(ssDesc, 'methods.GET.static', {
+            contentPath: '',
+            config: {}
+        })
+        return {
+            name: ssDesc.name || '',
+            description: ssDesc.description || '',
+            uriTemplate: ssDesc.uriTemplate,
+            contentPath: ssConfig.contentPath,
+            config: ssConfig.config
+        }
+    })
 
 /**
  * Get all test cases
  *
  * @return {Array} - The array of test case descriptor objects
  */
-exports.getAllTestCases = function() {
+export const getAllTestCases = function() {
     let testCases = []
 
     for (let service in services) {

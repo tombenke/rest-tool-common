@@ -1,6 +1,0 @@
-services:
-    - /customers
-    - /customers/customer
-    - /monitoring/isAlive
-    - /defaults/noHeaders
-    - /defaults/noTestCases

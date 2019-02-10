@@ -1,0 +1,14 @@
+name: The root static content service
+description: This is the default static service endpoint of the server
+uriTemplate: /
+style: STATIC
+methods:
+    GET:
+        summary: This is a static endpoint
+        notes: The `static` property is missing, so use the default values
+        responses:
+            -
+                name: OK
+                statusCode: 200
+                reason: Successful execution
+

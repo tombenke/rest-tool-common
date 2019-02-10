@@ -1,10 +1,11 @@
 /*jshint node: true */
 'use strict'
 
-const services = require('./index').services
-const should = require('should')
+import _ from 'lodash'
+import { services } from './index'
+import should from 'should'
 import { validate } from 'datafile'
-const path = require('path')
+import path from 'path'
 const schemaBasePath = __dirname + '/../schemas/'
 
 /**
@@ -247,6 +248,21 @@ describe('services', function() {
             }
 
             // If reached here, then fine.
+            done()
+        }
+    })
+
+    it('#getAllStaticEndpoints()', function(done) {
+        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
+            const allServices = services.getServices()
+            allServices.should.be.instanceof(Object)
+            const statics = services.getAllStaticEndpoints()
+            _.map(statics, staticDesc => {
+                _.map(['name', 'description', 'uriTemplate', 'contentPath', 'config'], prop => {
+                    staticDesc.should.have.property(prop)
+                })
+            })
+
             done()
         }
     })
