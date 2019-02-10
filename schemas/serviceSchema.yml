@@ -67,6 +67,9 @@ definitions:
             implementation:
                 description: "The implementation of the call in the following format: <module>.<function> (optional)"
                 type: string
+            static:
+                description: The endpoint represents static content service
+                $ref: "#/definitions/static"
             request:
                 description: The detailed specification of request
                 $ref: "#/definitions/request"
@@ -77,6 +80,15 @@ definitions:
                 description: The detailed specification of test cases
                 $ref: "#/definitions/testCases"
 
+    static:
+        description: Static content service configuration
+        type: object
+        required: [contentPath]
+        properties:
+            contentPath:
+                type: string
+            config:
+                type: object
     request:
         description: Specification of the request
         type: object

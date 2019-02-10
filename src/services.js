@@ -52,7 +52,6 @@ export const load = (restapiRoot, servicesRoot = '') => {
         )
     )
 
-    console.log('servicesToLoad: ', restapiRoot, servicesRoot, servicesToLoad)
     return loadServices(restapiRoot, servicesRoot, servicesToLoad)
 }
 

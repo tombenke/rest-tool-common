@@ -6,6 +6,8 @@ methods:
     GET:
         summary: This is a static endpoint
         notes: The `static` property is missing, so use the default values
+        static:
+            contentPath: /
         responses:
             -
                 name: OK
