@@ -42,11 +42,13 @@ const mapOwnProperties = function(obj, func) {
 export const load = (restapiRoot, servicesRoot = '') => {
     const fullServicesRoot = path.resolve(restapiRoot, servicesRoot)
     const servicesToLoad = _.concat(
-        _.map(findFilesSync(fullServicesRoot, /.*service\.yml$/), servicePath =>
-            servicePath.replace(fullServicesRoot, '')//.replace('/service.yml', '')
+        _.map(
+            findFilesSync(fullServicesRoot, /.*service\.yml$/),
+            servicePath => servicePath.replace(fullServicesRoot, '') //.replace('/service.yml', '')
         ),
-        _.map(findFilesSync(fullServicesRoot, /.*endpoint\.yml$/), servicePath =>
-            servicePath.replace(fullServicesRoot, '')//.replace('/endpoint.yml', '')
+        _.map(
+            findFilesSync(fullServicesRoot, /.*endpoint\.yml$/),
+            servicePath => servicePath.replace(fullServicesRoot, '') //.replace('/endpoint.yml', '')
         )
     )
 
@@ -422,7 +424,7 @@ export const getServices = function() {
  * @return {Array} - The array of static endpoint descriptors
  */
 export const getAllStaticEndpoints = () =>
-    _.map(_.filter(services, serviceDesc => serviceDesc.style === 'STATIC'), (ssDesc) => {
+    _.map(_.filter(services, serviceDesc => serviceDesc.style === 'STATIC'), ssDesc => {
         const ssConfig = _.get(ssDesc, 'methods.GET.static', {
             contentPath: '',
             config: {}

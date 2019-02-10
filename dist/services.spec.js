@@ -1,12 +1,24 @@
 /*jshint node: true */
 'use strict';
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _index = require('./index');
+
+var _should = require('should');
+
+var _should2 = _interopRequireDefault(_should);
+
 var _datafile = require('datafile');
 
-var services = require('./index').services;
-var should = require('should');
+var _path = require('path');
 
-var path = require('path');
+var _path2 = _interopRequireDefault(_path);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var schemaBasePath = __dirname + '/../schemas/';
 
 /**
@@ -38,20 +50,20 @@ var validateTestCase = function validateTestCase(testCase) {
 
 describe('services', function () {
     it('#load() - with default services path', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
             done();
         }
     });
 
     it('#load() - with explicit services path', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures')) != null) {
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures')) != null) {
             done();
         }
     });
 
     it('#getServices() - service descriptors are valid', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
             var validationErrors = 0;
 
@@ -67,8 +79,8 @@ describe('services', function () {
     });
 
     it('#getAllTestCases()', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allTestCases = services.getAllTestCases();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allTestCases = _index.services.getAllTestCases();
 
             // Validate each test-cases
             allTestCases.should.be.instanceof(Array);
@@ -81,8 +93,8 @@ describe('services', function () {
     });
 
     it('#testNoTestCases()', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
 
             var noTestCasesService = allServices['/defaults/noTestCases'];
@@ -117,28 +129,28 @@ describe('services', function () {
             tags: ['picky']
         };
 
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getMockRequestBody('PUT', allServices['/customers/{id}']).should.be.eql(expectedResult);
+            _index.services.getMockRequestBody('PUT', allServices['/customers/{id}']).should.be.eql(expectedResult);
             done();
         }
     });
 
     it('#getMockResponseBody()', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getMockResponseBody('GET', allServices['/monitoring/isAlive'], 'OK').should.be.equal('The service is alive\n');
+            _index.services.getMockResponseBody('GET', allServices['/monitoring/isAlive'], 'OK').should.be.equal('The service is alive\n');
             done();
         }
     });
 
     it('#getImplementation()', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getImplementation(allServices['/customers'], 'get').should.be.equal('api.getCustomers');
+            _index.services.getImplementation(allServices['/customers'], 'get').should.be.equal('api.getCustomers');
             done();
         }
     });
@@ -150,10 +162,10 @@ describe('services', function () {
             'Accept-Encoding': 'gzip, deflate'
         }];
 
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getRequestHeaders('get', allServices['/customers/{id}']).should.be.eql(expectedResult);
+            _index.services.getRequestHeaders('get', allServices['/customers/{id}']).should.be.eql(expectedResult);
             done();
         }
     });
@@ -167,17 +179,17 @@ describe('services', function () {
             'X-Application-API-Version': 'v0.1'
         }];
 
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
-            services.getResponseHeaders('GET', allServices['/customers/{id}'], 'OK').should.be.eql(expectedResult);
+            _index.services.getResponseHeaders('GET', allServices['/customers/{id}'], 'OK').should.be.eql(expectedResult);
             done();
         }
     });
 
     it('#testDefaults()', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
 
             // Check if each method and their request and response objects
@@ -222,8 +234,8 @@ describe('services', function () {
     });
 
     it('#testAliases()', function (done) {
-        if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
-            var allServices = services.getServices();
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
             allServices.should.be.instanceof(Object);
 
             // Check the aliases for each services
@@ -240,6 +252,21 @@ describe('services', function () {
             }
 
             // If reached here, then fine.
+            done();
+        }
+    });
+
+    it('#getAllStaticEndpoints()', function (done) {
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures'), 'services') != null) {
+            var allServices = _index.services.getServices();
+            allServices.should.be.instanceof(Object);
+            var statics = _index.services.getAllStaticEndpoints();
+            _lodash2.default.map(statics, function (staticDesc) {
+                _lodash2.default.map(['name', 'description', 'uriTemplate', 'contentPath', 'config'], function (prop) {
+                    staticDesc.should.have.property(prop);
+                });
+            });
+
             done();
         }
     });

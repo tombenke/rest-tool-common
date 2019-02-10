@@ -1,13 +1,9 @@
-#!/usr/bin/env node
-
-/*jshint node: true */
 'use strict';
 
-/**
- * A module that loads and provides the service endpoint descriptors
- *
- * @module services
- */
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.getAllTestCases = exports.getAllStaticEndpoints = exports.getServices = exports.getResponseHeaders = exports.getRequestHeaders = exports.getMockResponseBody = exports.getMockRequestBody = exports.getImplementation = exports.load = undefined;
 
 var _path = require('path');
 
@@ -23,7 +19,11 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; } /**
+                                                                                                                                                                                                                   * A module that loads and provides the service endpoint descriptors
+                                                                                                                                                                                                                   *
+                                                                                                                                                                                                                   * @module services
+                                                                                                                                                                                                                   */
 
 //const schemas = require('/schemas/')
 var schemaBasePath = __dirname + '/../schemas/';
@@ -57,14 +57,19 @@ var mapOwnProperties = function mapOwnProperties(obj, func) {
  *
  * @function
  */
-exports.load = function (restapiRoot) {
-    var servicesRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'services';
+var load = exports.load = function load(restapiRoot) {
+    var servicesRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
     var fullServicesRoot = _path2.default.resolve(restapiRoot, servicesRoot);
-    var servicesToLoad = _.map((0, _datafile.findFilesSync)(fullServicesRoot, /.*service\.yml$/), function (servicePath) {
-        return servicePath.replace(fullServicesRoot, '').replace('/service.yml', '');
-    });
+    var servicesToLoad = _.concat(_.map((0, _datafile.findFilesSync)(fullServicesRoot, /.*service\.yml$/), function (servicePath) {
+        return servicePath.replace(fullServicesRoot, '');
+    } //.replace('/service.yml', '')
+    ), _.map((0, _datafile.findFilesSync)(fullServicesRoot, /.*endpoint\.yml$/), function (servicePath) {
+        return servicePath.replace(fullServicesRoot, '');
+    } //.replace('/endpoint.yml', '')
+    ));
 
+    console.log('servicesToLoad: ', restapiRoot, servicesRoot, servicesToLoad);
     return loadServices(restapiRoot, servicesRoot, servicesToLoad);
 };
 
@@ -206,7 +211,7 @@ var loadServices = function loadServices(restapiRoot, servicesRoot, servicesToLo
 
     // serviceFolders
     servicesToLoad.forEach(function (servicePath) {
-        var serviceDescriptorFileName = baseFolder + servicePath + '/service.yml';
+        var serviceDescriptorFileName = baseFolder + servicePath; // + '/service.yml'
 
         // Load the YAML format service descriptor
         // console.log('Loading ' + serviceDescriptorFileName)
@@ -223,7 +228,7 @@ var loadServices = function loadServices(restapiRoot, servicesRoot, servicesToLo
             // Set service description to services map
             // console.log(serviceDescriptorFileName + 'service is loaded.\n')
             serviceDescriptor.restapiRoot = restapiRoot;
-            serviceDescriptor.contentPath = servicesRoot + servicePath;
+            serviceDescriptor.contentPath = servicesRoot + servicePath.replace(/service\.yml|endpoint\.yml/, '');
             services[serviceDescriptor.uriTemplate] = serviceDescriptor;
         } else {
             throw err;
@@ -258,7 +263,7 @@ var findHeaderValue = function findHeaderValue(headers, field) {
  *
  * @return {String} - The content of the implementation property
  */
-exports.getImplementation = function (serviceDesc, method) {
+var getImplementation = exports.getImplementation = function getImplementation(serviceDesc, method) {
     return serviceDesc.methods[method.toUpperCase()].implementation || null;
 };
 
@@ -305,7 +310,7 @@ var getMockBody = function getMockBody(serviceDesc, mockBodyPath, contentType) {
  *
  * @return {String}              The content of the mock body
  */
-exports.getMockRequestBody = function (method, serviceDesc) {
+var getMockRequestBody = exports.getMockRequestBody = function getMockRequestBody(method, serviceDesc) {
     var capsMethod = method.toUpperCase();
     var mockBody = '';
     var contentType = 'application/json';
@@ -329,7 +334,7 @@ exports.getMockRequestBody = function (method, serviceDesc) {
  * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
  * @return {String}                - The content of the mock body
  */
-exports.getMockResponseBody = function (method, serviceDesc, nameOfResponse) {
+var getMockResponseBody = exports.getMockResponseBody = function getMockResponseBody(method, serviceDesc, nameOfResponse) {
     var capsMethod = method.toUpperCase();
     var responseName = nameOfResponse || 'OK';
     var mockBody = '';
@@ -365,7 +370,7 @@ var mkHeadersMap = function mkHeadersMap(headers) {
  * @param  {Object} serviceDesc    - The service descriptor object
  * @return {String}                - The list of headers
  */
-exports.getRequestHeaders = function (method, serviceDesc) {
+var getRequestHeaders = exports.getRequestHeaders = function getRequestHeaders(method, serviceDesc) {
     var capsMethod = method.toUpperCase();
     if (_.hasIn(serviceDesc.methods, [capsMethod, 'request', 'headers']) && _.isArray(serviceDesc.methods[capsMethod].request.headers)) {
         return mkHeadersMap(serviceDesc.methods[capsMethod].request.headers);
@@ -404,7 +409,7 @@ var findResponseDesc = function findResponseDesc(method, serviceDesc, nameOfResp
  * @param  {Object} nameOfResponse - The name of the response, default: 'OK'
  * @return {String}                - The content of the headers
  */
-exports.getResponseHeaders = function (method, serviceDesc, nameOfResponse) {
+var getResponseHeaders = exports.getResponseHeaders = function getResponseHeaders(method, serviceDesc, nameOfResponse) {
     var responseName = nameOfResponse || 'OK';
 
     var response = findResponseDesc(method, serviceDesc, responseName);
@@ -418,8 +423,31 @@ exports.getResponseHeaders = function (method, serviceDesc, nameOfResponse) {
  *
  * @return {Object} - The list of services, where the keys of the object are the URI patterns.
  */
-exports.getServices = function () {
+var getServices = exports.getServices = function getServices() {
     return services;
+};
+
+/**
+ * Get all static endpoints
+ *
+ * @return {Array} - The array of static endpoint descriptors
+ */
+var getAllStaticEndpoints = exports.getAllStaticEndpoints = function getAllStaticEndpoints() {
+    return _.map(_.filter(services, function (serviceDesc) {
+        return serviceDesc.style === 'STATIC';
+    }), function (ssDesc) {
+        var ssConfig = _.get(ssDesc, 'methods.GET.static', {
+            contentPath: '',
+            config: {}
+        });
+        return {
+            name: ssDesc.name || '',
+            description: ssDesc.description || '',
+            uriTemplate: ssDesc.uriTemplate,
+            contentPath: ssConfig.contentPath,
+            config: ssConfig.config
+        };
+    });
 };
 
 /**
@@ -427,7 +455,7 @@ exports.getServices = function () {
  *
  * @return {Array} - The array of test case descriptor objects
  */
-exports.getAllTestCases = function () {
+var getAllTestCases = exports.getAllTestCases = function getAllTestCases() {
     var testCases = [];
 
     for (var service in services) {
