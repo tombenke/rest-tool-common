@@ -8,7 +8,7 @@ required:
 
 properties:
     services:
-        description: A list of usb-folders under 'services' that which contain the active services
+        description: A list of sub-folders under 'services' that which contain the active services
         type: array
         items:
             description: The path to the service descriptor under the services folder
