@@ -1,0 +1,34 @@
+[
+    {
+        "uri": "/pets",
+        "jsfUri": "/pets",
+        "method": "get",
+        "operationId": "findPets",
+        "consumes": ["application/json"],
+        "produces": ["application/json", "application/xml", "text/xml", "text/html"]
+    },
+    {
+        "uri": "/pets",
+        "jsfUri": "/pets",
+        "method": "post",
+        "operationId": "addPet",
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+    },
+    {
+        "uri": "/pets/{id}",
+        "jsfUri": "/pets/:id",
+        "method": "get",
+        "operationId": "findPetById",
+        "consumes": ["application/json"],
+        "produces": ["application/json", "application/xml", "text/xml", "text/html"]
+    },
+    {
+        "uri": "/pets/{id}",
+        "jsfUri": "/pets/:id",
+        "method": "delete",
+        "operationId": "deletePet",
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+    }
+]
