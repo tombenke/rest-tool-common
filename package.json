@@ -15,6 +15,10 @@
     "name": "Tamás Benke",
     "email": "tombenke@gmail.com"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "http://github.com/tombenke/rest-tool-common.git"
