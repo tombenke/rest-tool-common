@@ -1,0 +1,38 @@
+[
+  {
+    "uri": "/test/endpoint",
+    "jsfUri": "/test/endpoint",
+    "method": "get",
+    "operationId": null,
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ]
+  },
+  {
+    "uri": "/test/endpoint",
+    "jsfUri": "/test/endpoint",
+    "method": "put",
+    "operationId": "testAdapter.endpoint",
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ]
+  },
+  {
+    "uri": "/test/endpoint",
+    "jsfUri": "/test/endpoint",
+    "method": "post",
+    "operationId": "testAdapter.endpointErr500",
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ]
+  }
+]

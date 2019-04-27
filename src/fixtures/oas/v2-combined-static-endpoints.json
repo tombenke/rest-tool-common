@@ -1,0 +1,12 @@
+[
+  {
+    "uri": "/docs/",
+    "static": {
+      "contentPath": "fixtures/content/",
+      "config": {
+        "dotfiles": "allow",
+        "index": true
+      }
+    }
+  }
+]

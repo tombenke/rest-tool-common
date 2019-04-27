@@ -43,7 +43,7 @@ describe('services', function() {
     })
 
     it('#load() - with explicit services path', function(done) {
-        if (services.load(path.resolve(__dirname, 'fixtures')) != null) {
+        if (services.load(path.resolve(__dirname, 'fixtures/services')) != null) {
             done()
         }
     })

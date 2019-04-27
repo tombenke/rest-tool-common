@@ -1,0 +1,46 @@
+# /test/endpoint:
+get:
+  tags: 
+    - "non-static"
+  summary: Test resource
+  description: Responses the service descriptor, since there is no implementation function defined
+  # operationId: test.endpoint
+  consumes:
+    - application/json
+  produces: 
+    - application/json
+  responses: 
+    "200": 
+      description: OK
+  deprecated: false
+
+put:
+  tags: 
+    - "non-static"
+  summary: Test resource
+  description: Will call the test.endpoint() function to respond
+  operationId: testAdapter.endpoint
+  consumes:
+    - application/json
+  produces: 
+    - application/json
+  responses: 
+    "200": 
+      description: OK
+  deprecated: false
+
+post:
+  tags: 
+    - "non-static"
+  summary: Test resource
+  description: Will call the test.endpointErr500() function to respond
+  operationId: testAdapter.endpointErr500
+  consumes:
+    - application/json
+  produces: 
+    - application/json
+  responses: 
+    "200": 
+      description: OK
+  deprecated: false
+
