@@ -3,9 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getAllOpenApiEndpoints = exports.methodNames = exports.makeJsonicFriendly = exports.getAllSwaggerEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.loadOas = undefined;
+exports.getAllOpenApiEndpoints = exports.methodNames = exports.makeJsonicFriendly = exports.getAllSwaggerEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.getNonStaticEndpoints = exports.getStaticEndpoints = exports.loadOas = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
+                                                                                                                                                                                                                                                                   * A module that loads swagger and OpenAPI 3.0 format API specifications
+                                                                                                                                                                                                                                                                   * and provides the service endpoint descriptors
+                                                                                                                                                                                                                                                                   *
+                                                                                                                                                                                                                                                                   * @module services
+                                                                                                                                                                                                                                                                   */
 
 var _lodash = require('lodash');
 
@@ -17,10 +22,20 @@ var _swaggerParser2 = _interopRequireDefault(_swaggerParser);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * Load swagger and/or OpenAPI specification
+ * The specification can be a single file, or that can made of several partials.
+ *
+ * @arg {String} oasFile - The path of the root file of the API specification.
+ * @arg {Object} options - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
+ *
+ * @return {Promise} A Promise, that resolves to an endpoints object, that provides functions to access to the individual endpoints as well as to the whole loaded model.
+ *
+ * @function
+ */
 var loadOas = exports.loadOas = function loadOas(oasFile) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     return _swaggerParser2.default.validate(oasFile, options).then(function (api) {
-        //console.log(JSON.stringify(api, null, 2))
         return {
             oasModel: api,
             getOasModel: function getOasModel() {
@@ -34,6 +49,12 @@ var loadOas = exports.loadOas = function loadOas(oasFile) {
             },
             getEndpoints: function getEndpoints() {
                 return _getEndpoints(api);
+            },
+            getStaticEndpoints: function getStaticEndpoints() {
+                return _getStaticEndpoints(api);
+            },
+            getNonStaticEndpoints: function getNonStaticEndpoints() {
+                return _getNonStaticEndpoints(api);
             }
         };
     }).catch(function (err) {
@@ -42,6 +63,19 @@ var loadOas = exports.loadOas = function loadOas(oasFile) {
     });
 };
 
+var _getStaticEndpoints = function _getStaticEndpoints(oasApi) {
+    return _lodash2.default.filter(_getEndpoints(oasApi), function (endpoint) {
+        return _lodash2.default.has(endpoint, 'static');
+    });
+};
+exports.getStaticEndpoints = _getStaticEndpoints;
+var _getNonStaticEndpoints = function _getNonStaticEndpoints(oasApi) {
+    return _lodash2.default.filter(_getEndpoints(oasApi), function (endpoint) {
+        return !_lodash2.default.has(endpoint, 'static');
+    });
+};
+
+exports.getNonStaticEndpoints = _getNonStaticEndpoints;
 var _getEndpoints = function _getEndpoints(oasApi) {
     return isSwagger(oasApi) ? getAllSwaggerEndpoints(oasApi) : isOpenApi(oasApi) ? getAllOpenApiEndpoints(oasApi) : [];
 };
@@ -71,11 +105,14 @@ var getAllSwaggerEndpoints = exports.getAllSwaggerEndpoints = function getAllSwa
             }, path[methodName])] : [];
         });
     }).map(function (endpoint) {
-        return {
+        return _lodash2.default.has(endpoint, 'x-static') ? {
+            uri: endpoint.uri,
+            static: endpoint['x-static']
+        } : {
             uri: endpoint.uri,
             jsfUri: endpoint.jsfUri,
             method: endpoint.method,
-            operationId: endpoint.operationId,
+            operationId: _lodash2.default.get(endpoint, 'operationId', null),
             consumes: _lodash2.default.get(endpoint, 'consumes', _lodash2.default.get(swaggerApi, 'consumes', [])),
             produces: _lodash2.default.get(endpoint, 'produces', _lodash2.default.get(swaggerApi, 'produces', []))
         };

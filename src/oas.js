@@ -33,12 +33,11 @@ export const loadOas = (oasFile, options = {}) =>
             }
         })
         .catch(err => {
-            console.log(err)
             return Promise.reject(err)
         })
 
 export const getStaticEndpoints = oasApi => _.filter(getEndpoints(oasApi), endpoint => _.has(endpoint, 'static'))
-export const getNonStaticEndpoints = oasApi => _.filter(getEndpoints(oasApi), endpoint => ! _.has(endpoint, 'static'))
+export const getNonStaticEndpoints = oasApi => _.filter(getEndpoints(oasApi), endpoint => !_.has(endpoint, 'static'))
 
 export const getEndpoints = oasApi =>
     isSwagger(oasApi) ? getAllSwaggerEndpoints(oasApi) : isOpenApi(oasApi) ? getAllOpenApiEndpoints(oasApi) : []
@@ -71,17 +70,21 @@ export const getAllSwaggerEndpoints = swaggerApi =>
                     : []
             )
         )
-        .map(endpoint => (_.has(endpoint, 'x-static') ? {
-            uri: endpoint.uri,
-            static: endpoint['x-static']
-        } : {
-            uri: endpoint.uri,
-            jsfUri: endpoint.jsfUri,
-            method: endpoint.method,
-            operationId: _.get(endpoint, 'operationId', null),
-            consumes: _.get(endpoint, 'consumes', _.get(swaggerApi, 'consumes', [])),
-            produces: _.get(endpoint, 'produces', _.get(swaggerApi, 'produces', []))
-        }))
+        .map(endpoint =>
+            _.has(endpoint, 'x-static')
+                ? {
+                      uri: endpoint.uri,
+                      static: endpoint['x-static']
+                  }
+                : {
+                      uri: endpoint.uri,
+                      jsfUri: endpoint.jsfUri,
+                      method: endpoint.method,
+                      operationId: _.get(endpoint, 'operationId', null),
+                      consumes: _.get(endpoint, 'consumes', _.get(swaggerApi, 'consumes', [])),
+                      produces: _.get(endpoint, 'produces', _.get(swaggerApi, 'produces', []))
+                  }
+        )
         .value()
 
 export const makeJsonicFriendly = function(uri) {

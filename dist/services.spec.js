@@ -56,7 +56,7 @@ describe('services', function () {
     });
 
     it('#load() - with explicit services path', function (done) {
-        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures')) != null) {
+        if (_index.services.load(_path2.default.resolve(__dirname, 'fixtures/services')) != null) {
             done();
         }
     });

@@ -48,13 +48,10 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/combined/api.yml')
         loadOas(oasFile, oasConfig).then(api => {
             const staticEndpoints = api.getStaticEndpoints()
-            console.log(JSON.stringify(staticEndpoints, null, 2))
             staticEndpoints.should.be.eql(v2CombinedStaticEndpoints)
             const nonStaticEndpoints = api.getNonStaticEndpoints()
-            console.log(JSON.stringify(nonStaticEndpoints, null, 2))
             nonStaticEndpoints.should.be.eql(v2CombinedNonStaticEndpoints)
             done()
         })
     })
-
 })
