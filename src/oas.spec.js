@@ -22,9 +22,17 @@ const oasConfig = {
 }
 
 describe('oas', () => {
-    it('#loadOas()', done => {
+    it('#loadOas() - from file', done => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
         loadOas(oasFile, oasConfig).then(res => done())
+    })
+
+    it('#loadOas() - from swagger object', done => {
+        loadOas(v2PetStoreSimpleOasModel, oasConfig).then(api => {
+            const oasModel = api.getOasModel()
+            oasModel.should.be.eql(v2PetStoreSimpleOasModel)
+            done()
+        })
     })
 
     it('#loadOas() - fails', done => {
