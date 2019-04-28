@@ -20,7 +20,7 @@ for further details on how to use this library.
 Use the `loadOas()` function that needs the path to the root descriptor file of either a swagger v2.0 or OpenApi v3.0 file.
 The function loads the whole description, even they are distributed among several partials, then returns an object the porvides further functions that makes available the endpoints of the API.
 
-Find examples for both [static](fixtures/oas/v2-combined-static-endpoints.json) and [non-static](fixtures/oas/v2-combined-nonstatic-endpoints.json) endpoints under the fixtures.
+Find examples for both [static](src/fixtures/oas/v2-combined-static-endpoints.json) and [non-static](src/fixtures/oas/v2-combined-nonstatic-endpoints.json) endpoints under the fixtures.
 
 Read the [oas module documentation](https://tombenke.github.io/rest-tool-common/module-oas.html)
 for further details.
