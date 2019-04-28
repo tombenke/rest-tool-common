@@ -26,10 +26,18 @@ var oasConfig = {
 };
 
 describe('oas', function () {
-    it('#loadOas()', function (done) {
+    it('#loadOas() - from file', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (res) {
             return done();
+        });
+    });
+
+    it('#loadOas() - from swagger object', function (done) {
+        (0, _oas.loadOas)(_fixtures.v2PetStoreSimpleOasModel, oasConfig).then(function (api) {
+            var oasModel = api.getOasModel();
+            oasModel.should.be.eql(_fixtures.v2PetStoreSimpleOasModel);
+            done();
         });
     });
 

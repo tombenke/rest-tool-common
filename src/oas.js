@@ -11,8 +11,9 @@ import SwaggerParser from 'swagger-parser'
 /**
  * Load swagger and/or OpenAPI specification
  * The specification can be a single file, or that can made of several partials.
+ * It also can be a swagger object.
  *
- * @arg {String} oasFile - The path of the root file of the API specification.
+ * @arg {String|Object} oasFile - The path string of the root file of the API specification, or a swagger object.
  * @arg {Object} options - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
  *
  * @return {Promise} A Promise, that resolves to an API descriptor object, that provides inner functions to access to the individual endpoints as well as to the whole loaded model.
