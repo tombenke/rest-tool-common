@@ -45,7 +45,7 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
         loadOas(oasFile, oasConfig).then(api => {
             const apiVersion = api.getVersion()
-            apiVersion.should.be.equal("1.0.0")
+            apiVersion.should.be.equal('1.0.0')
             done()
         })
     })
@@ -54,7 +54,7 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
         loadOas(oasFile, oasConfig).then(api => {
             const apiTitle = api.getTitle()
-            apiTitle.should.be.equal("Swagger Petstore")
+            apiTitle.should.be.equal('Swagger Petstore')
             done()
         })
     })

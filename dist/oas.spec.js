@@ -33,6 +33,40 @@ describe('oas', function () {
         });
     });
 
+    it('#loadOas() - fails', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'non-existing-api-file');
+        (0, _oas.loadOas)(oasFile, oasConfig).catch(function (res) {
+            return done();
+        });
+    });
+
+    it('#getOasModel', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var oasModel = api.getOasModel();
+            oasModel.should.be.eql(_fixtures.v2PetStoreSimpleOasModel);
+            done();
+        });
+    });
+
+    it('#getVersion', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var apiVersion = api.getVersion();
+            apiVersion.should.be.equal('1.0.0');
+            done();
+        });
+    });
+
+    it('#getTitle', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var apiTitle = api.getTitle();
+            apiTitle.should.be.equal('Swagger Petstore');
+            done();
+        });
+    });
+
     it('#getEndpoints - from v2.0', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-simple.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {

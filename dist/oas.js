@@ -9,7 +9,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                                                                                                                                                                                                                                                                    * A module that loads swagger and OpenAPI 3.0 format API specifications
                                                                                                                                                                                                                                                                    * and provides the service endpoint descriptors
                                                                                                                                                                                                                                                                    *
-                                                                                                                                                                                                                                                                   * @module services
+                                                                                                                                                                                                                                                                   * @module oas
                                                                                                                                                                                                                                                                    */
 
 var _lodash = require('lodash');
@@ -29,30 +29,69 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @arg {String} oasFile - The path of the root file of the API specification.
  * @arg {Object} options - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
  *
- * @return {Promise} A Promise, that resolves to an endpoints object, that provides functions to access to the individual endpoints as well as to the whole loaded model.
+ * @return {Promise} A Promise, that resolves to an API descriptor object, that provides inner functions to access to the individual endpoints as well as to the whole loaded model.
  *
  * @function
+ * @async
  */
 var loadOas = exports.loadOas = function loadOas(oasFile) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     return _swaggerParser2.default.validate(oasFile, options).then(function (api) {
         return {
+            /**
+             * The Original OpenAPI model as it was loaded
+             */
             oasModel: api,
+
+            /**
+             * Return with the original OAS model
+             * @function
+             */
             getOasModel: function getOasModel() {
                 return api;
             },
+
+            /**
+             * Get the title of the API
+             * @return {String} - The title of the API
+             * @function
+             */
             getTitle: function getTitle() {
                 return api.info.title;
             },
+
+            /**
+             * Get the version of the API
+             * @return {String} - The version of the API
+             * @function
+             */
             getVersion: function getVersion() {
                 return api.info.version;
             },
+
+            /**
+             * Get all the endpoins defined by the API
+             * @return {Array} - The array of endpoints of the API
+             * @function
+             */
             getEndpoints: function getEndpoints() {
                 return _getEndpoints(api);
             },
+
+            /**
+             * Get the static endpoins defined by the API
+             * @return {Array} - The array of static endpoints of the API
+             * @function
+             */
             getStaticEndpoints: function getStaticEndpoints() {
                 return _getStaticEndpoints(api);
             },
+
+            /**
+             * Get the normal REST endpoins defined by the API
+             * @return {Array} - The array of normal, (non-static, REST) endpoints of the API
+             * @function
+             */
             getNonStaticEndpoints: function getNonStaticEndpoints() {
                 return _getNonStaticEndpoints(api);
             }
