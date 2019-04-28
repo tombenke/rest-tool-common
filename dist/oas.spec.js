@@ -55,10 +55,8 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/combined/api.yml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var staticEndpoints = api.getStaticEndpoints();
-            console.log(JSON.stringify(staticEndpoints, null, 2));
             staticEndpoints.should.be.eql(_fixtures.v2CombinedStaticEndpoints);
             var nonStaticEndpoints = api.getNonStaticEndpoints();
-            console.log(JSON.stringify(nonStaticEndpoints, null, 2));
             nonStaticEndpoints.should.be.eql(_fixtures.v2CombinedNonStaticEndpoints);
             done();
         });

@@ -58,7 +58,6 @@ var loadOas = exports.loadOas = function loadOas(oasFile) {
             }
         };
     }).catch(function (err) {
-        console.log(err);
         return Promise.reject(err);
     });
 };

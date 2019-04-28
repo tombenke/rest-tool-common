@@ -6,6 +6,7 @@ import {
     v2CombinedStaticEndpoints,
     v2CombinedNonStaticEndpoints,
     v2PetStoreSimpleEndpoints,
+    v2PetStoreSimpleOasModel,
     v3PetStoreSimpleEndpoints
 } from './fixtures/'
 
@@ -24,6 +25,38 @@ describe('oas', () => {
     it('#loadOas()', done => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
         loadOas(oasFile, oasConfig).then(res => done())
+    })
+
+    it('#loadOas() - fails', done => {
+        const oasFile = path.resolve(oasBasePath, 'non-existing-api-file')
+        loadOas(oasFile, oasConfig).catch(res => done())
+    })
+
+    it('#getOasModel', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const oasModel = api.getOasModel()
+            oasModel.should.be.eql(v2PetStoreSimpleOasModel)
+            done()
+        })
+    })
+
+    it('#getVersion', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const apiVersion = api.getVersion()
+            apiVersion.should.be.equal("1.0.0")
+            done()
+        })
+    })
+
+    it('#getTitle', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const apiTitle = api.getTitle()
+            apiTitle.should.be.equal("Swagger Petstore")
+            done()
+        })
     })
 
     it('#getEndpoints - from v2.0', done => {

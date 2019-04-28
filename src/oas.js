@@ -2,7 +2,7 @@
  * A module that loads swagger and OpenAPI 3.0 format API specifications
  * and provides the service endpoint descriptors
  *
- * @module services
+ * @module oas
  */
 
 import _ from 'lodash'
@@ -15,20 +15,59 @@ import SwaggerParser from 'swagger-parser'
  * @arg {String} oasFile - The path of the root file of the API specification.
  * @arg {Object} options - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
  *
- * @return {Promise} A Promise, that resolves to an endpoints object, that provides functions to access to the individual endpoints as well as to the whole loaded model.
+ * @return {Promise} A Promise, that resolves to an API descriptor object, that provides inner functions to access to the individual endpoints as well as to the whole loaded model.
  *
  * @function
+ * @async
  */
 export const loadOas = (oasFile, options = {}) =>
     SwaggerParser.validate(oasFile, options)
         .then(api => {
             return {
+                /**
+                 * The Original OpenAPI model as it was loaded
+                 */
                 oasModel: api,
+
+                /**
+                 * Return with the original OAS model
+                 * @function
+                 */
                 getOasModel: () => api,
+
+                /**
+                 * Get the title of the API
+                 * @return {String} - The title of the API
+                 * @function
+                 */
                 getTitle: () => api.info.title,
+
+                /**
+                 * Get the version of the API
+                 * @return {String} - The version of the API
+                 * @function
+                 */
                 getVersion: () => api.info.version,
+
+                /**
+                 * Get all the endpoins defined by the API
+                 * @return {Array} - The array of endpoints of the API
+                 * @function
+                 */
                 getEndpoints: () => getEndpoints(api),
+
+                /**
+                 * Get the static endpoins defined by the API
+                 * @return {Array} - The array of static endpoints of the API
+                 * @function
+                 */
                 getStaticEndpoints: () => getStaticEndpoints(api),
+
+                /**
+                 * Get the normal REST endpoins defined by the API
+                 * @return {Array} - The array of normal, (non-static, REST) endpoints of the API
+                 * @function
+                 */
                 getNonStaticEndpoints: () => getNonStaticEndpoints(api)
             }
         })

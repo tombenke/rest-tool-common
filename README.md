@@ -6,6 +6,26 @@ Common modules for the rest-tool
 [![Build Status][travis-badge]][travis-url]
 [![Coveralls][BadgeCoveralls]][Coveralls]
 
+This module provides functions to load REST API descriptor files and help the implementation of both servers and clients that communicates through the API.
+
+There are two main approach to use this module.
+- Use the `loadOas()` function from the `oas` module (preferred).
+- Use the `services` module that is made for the `rest-tool` (deprecated).
+
+Read the [API documentation](https://tombenke.github.io/rest-tool-common/index.html)
+for further details on how to use this library.
+
+## The OAS way
+
+Use the `loadOas()` function that needs the path to the root descriptor file of either a swagger v2.0 or OpenApi v3.0 file.
+The function loads the whole description, even they are distributed among several partials, then returns an object the porvides further functions that makes available the endpoints of the API.
+
+Find examples for both [static](fixtures/oas/v2-combined-static-endpoints.json) and [non-static](fixtures/oas/v2-combined-nonstatic-endpoints.json) endpoints under the fixtures.
+
+Read the [oas module documentation](https://tombenke.github.io/rest-tool-common/module-oas.html)
+for further details.
+
+## The rest-tool way
 
 The 'rest-tool' is a simple Node.js command-line tool which can be used to document,
 emulate and test RESTful APIs. 
@@ -17,10 +37,8 @@ This module is referred by the package.json files and automatically installed du
 of the 'rest-tool', so you probably will not use it directly unless you are willing to develop 
 your own code generator or templates.
 
-Read the [API documentation](https://tombenke.github.io/rest-tool-common/index.html)
-for further details on how to use this library.
-
-## Further readings
+Read the [services module documentation](https://tombenke.github.io/rest-tool-common/module-services.html)
+for further details.
 
 To learn more on how to setup the project, and how to use the tool visit the 
 [rest-tool project repository](https://github.com/tombenke/rest-tool) on GitHub.
