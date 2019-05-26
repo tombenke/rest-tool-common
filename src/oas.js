@@ -80,13 +80,17 @@ export const getStaticEndpoints = oasApi => _.filter(getEndpoints(oasApi), endpo
 export const getNonStaticEndpoints = oasApi => _.filter(getEndpoints(oasApi), endpoint => !_.has(endpoint, 'static'))
 
 export const getEndpoints = oasApi =>
-    isSwagger(oasApi) ? getAllSwaggerEndpoints(oasApi) : isOpenApi(oasApi) ? getAllOpenApiEndpoints(oasApi) : []
+    isSwagger(oasApi)
+        ? getAllEndpoints(oasApi, swaggerEndpointExtractor)
+        : isOpenApi(oasApi)
+        ? getAllEndpoints(oasApi, openApiEndpointExtractor)
+        : []
 
 export const isSwagger = oasApi => _.get(oasApi, 'swagger', '').match(/^2\.0.*/)
 
 export const isOpenApi = oasApi => _.get(oasApi, 'openapi', '').match(/^3\.0.*/)
 
-export const getAllSwaggerEndpoints = swaggerApi =>
+export const getAllEndpoints = (swaggerApi, responseExtractor) =>
     _.chain(
         // Get all paths as a list, including the path value as an 'uri' property
         _.values(
@@ -112,25 +116,67 @@ export const getAllSwaggerEndpoints = swaggerApi =>
         )
         .map(endpoint =>
             _.has(endpoint, 'x-static')
-                ? {
-                      uri: endpoint.uri,
-                      static: endpoint['x-static']
-                  }
-                : {
-                      uri: endpoint.uri,
-                      jsfUri: endpoint.jsfUri,
-                      method: endpoint.method,
-                      operationId: _.get(endpoint, 'operationId', null),
-                      consumes: _.get(endpoint, 'consumes', _.get(swaggerApi, 'consumes', [])),
-                      produces: _.get(endpoint, 'produces', _.get(swaggerApi, 'produces', []))
-                  }
+                ? makeStaticEndpoint(swaggerApi, endpoint, responseExtractor)
+                : makeOperationEndpoint(swaggerApi, endpoint, responseExtractor)
         )
         .value()
 
-export const makeJsonicFriendly = function(uri) {
-    return uri.replace(/\{/g, ':').replace(/\}/g, '')
-}
+export const makeStaticEndpoint = (swaggerApi, endpoint) => ({
+    uri: endpoint.uri,
+    static: endpoint['x-static']
+})
+
+export const makeOperationEndpoint = (api, endpoint, responseExtractor) => ({
+    uri: endpoint.uri,
+    jsfUri: endpoint.jsfUri,
+    method: endpoint.method,
+    operationId: _.get(endpoint, 'operationId', null),
+    consumes: _.get(endpoint, 'consumes', _.get(api, 'consumes', [])),
+    produces: _.get(endpoint, 'produces', _.get(api, 'produces', [])),
+    responses: responseExtractor(api, endpoint)
+})
+
+export const makeJsonicFriendly = uri => uri.replace(/\{/g, ':').replace(/\}/g, '')
 
 export const methodNames = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch']
 
-export const getAllOpenApiEndpoints = getAllSwaggerEndpoints // The minimal version returns with the same properties
+export const swaggerEndpointExtractor = (api, endpoint) =>
+    _.chain(
+        _.values(
+            _.mapValues(endpoint.responses, (v, k, o) => ({
+                status: k,
+                headers: _.get(v, 'headers', {}),
+                examples: _.mapValues(_.get(v, 'examples', {}), (v, k, o) => ({ noname: { mimeType: k, value: v } }))
+            }))
+        ).reduce((accu, v, k) => {
+            accu[v.status] = v
+            return accu
+        }, {})
+    ).value()
+
+export const openApiEndpointExtractor = (api, endpoint) =>
+    _.chain(
+        _.values(
+            _.mapValues(endpoint.responses, (v, k, o) => ({
+                status: k,
+                headers: _.get(v, 'headers', {}),
+                examples: getExamplesFromV3Content(_.get(v, 'content', {}))
+            }))
+        ).reduce((accu, v, k) => {
+            accu[v.status] = v
+            return accu
+        }, {})
+    ).value()
+
+export const getExamplesFromV3Content = (content, mimeType) =>
+    _.mapValues(content, (mimeTypeValue, mimeType, mto) =>
+        _.has(mimeTypeValue, 'example')
+            ? { noname: { mimeType: mimeType, value: mimeTypeValue.example } } // Return with example
+            : _.has(mimeTypeValue, 'examples')
+            ? _.mapValues(mimeTypeValue.examples, (v, k, o) => ({
+                  // Return with examples
+                  mimeType: mimeType,
+                  value: _.has(v, 'externalValue') ? v.externalValue : _.get(v, 'value', null)
+              }))
+            : {}
+    ) // Neither examples nor example are defined

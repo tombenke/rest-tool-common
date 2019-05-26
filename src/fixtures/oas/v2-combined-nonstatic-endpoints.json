@@ -5,7 +5,10 @@
         "method": "get",
         "operationId": null,
         "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "produces": ["application/json"],
+        "responses": {
+            "200": { "status": "200", "headers": {}, "examples": {} }
+        }
     },
     {
         "uri": "/test/endpoint",
@@ -13,7 +16,10 @@
         "method": "put",
         "operationId": "testAdapter.endpoint",
         "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "produces": ["application/json"],
+        "responses": {
+            "200": { "status": "200", "headers": {}, "examples": {} }
+        }
     },
     {
         "uri": "/test/endpoint",
@@ -21,6 +27,9 @@
         "method": "post",
         "operationId": "testAdapter.endpointErr500",
         "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "produces": ["application/json"],
+        "responses": {
+            "200": { "status": "200", "headers": {}, "examples": {} }
+        }
     }
 ]

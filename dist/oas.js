@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getAllOpenApiEndpoints = exports.methodNames = exports.makeJsonicFriendly = exports.getAllSwaggerEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.getNonStaticEndpoints = exports.getStaticEndpoints = exports.loadOas = undefined;
+exports.getExamplesFromV3Content = exports.openApiEndpointExtractor = exports.swaggerEndpointExtractor = exports.methodNames = exports.makeJsonicFriendly = exports.makeOperationEndpoint = exports.makeStaticEndpoint = exports.getAllEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.getNonStaticEndpoints = exports.getStaticEndpoints = exports.loadOas = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
                                                                                                                                                                                                                                                                    * A module that loads swagger and OpenAPI 3.0 format API specifications
@@ -116,7 +116,7 @@ var _getNonStaticEndpoints = function _getNonStaticEndpoints(oasApi) {
 
 exports.getNonStaticEndpoints = _getNonStaticEndpoints;
 var _getEndpoints = function _getEndpoints(oasApi) {
-    return isSwagger(oasApi) ? getAllSwaggerEndpoints(oasApi) : isOpenApi(oasApi) ? getAllOpenApiEndpoints(oasApi) : [];
+    return isSwagger(oasApi) ? getAllEndpoints(oasApi, swaggerEndpointExtractor) : isOpenApi(oasApi) ? getAllEndpoints(oasApi, openApiEndpointExtractor) : [];
 };
 
 exports.getEndpoints = _getEndpoints;
@@ -128,7 +128,7 @@ var isOpenApi = exports.isOpenApi = function isOpenApi(oasApi) {
     return _lodash2.default.get(oasApi, 'openapi', '').match(/^3\.0.*/);
 };
 
-var getAllSwaggerEndpoints = exports.getAllSwaggerEndpoints = function getAllSwaggerEndpoints(swaggerApi) {
+var getAllEndpoints = exports.getAllEndpoints = function getAllEndpoints(swaggerApi, responseExtractor) {
     return _lodash2.default.chain(
     // Get all paths as a list, including the path value as an 'uri' property
     _lodash2.default.values(_lodash2.default.mapValues(swaggerApi.paths, function (v, k, o) {
@@ -144,18 +144,27 @@ var getAllSwaggerEndpoints = exports.getAllSwaggerEndpoints = function getAllSwa
             }, path[methodName])] : [];
         });
     }).map(function (endpoint) {
-        return _lodash2.default.has(endpoint, 'x-static') ? {
-            uri: endpoint.uri,
-            static: endpoint['x-static']
-        } : {
-            uri: endpoint.uri,
-            jsfUri: endpoint.jsfUri,
-            method: endpoint.method,
-            operationId: _lodash2.default.get(endpoint, 'operationId', null),
-            consumes: _lodash2.default.get(endpoint, 'consumes', _lodash2.default.get(swaggerApi, 'consumes', [])),
-            produces: _lodash2.default.get(endpoint, 'produces', _lodash2.default.get(swaggerApi, 'produces', []))
-        };
+        return _lodash2.default.has(endpoint, 'x-static') ? makeStaticEndpoint(swaggerApi, endpoint, responseExtractor) : makeOperationEndpoint(swaggerApi, endpoint, responseExtractor);
     }).value();
+};
+
+var makeStaticEndpoint = exports.makeStaticEndpoint = function makeStaticEndpoint(swaggerApi, endpoint) {
+    return {
+        uri: endpoint.uri,
+        static: endpoint['x-static']
+    };
+};
+
+var makeOperationEndpoint = exports.makeOperationEndpoint = function makeOperationEndpoint(api, endpoint, responseExtractor) {
+    return {
+        uri: endpoint.uri,
+        jsfUri: endpoint.jsfUri,
+        method: endpoint.method,
+        operationId: _lodash2.default.get(endpoint, 'operationId', null),
+        consumes: _lodash2.default.get(endpoint, 'consumes', _lodash2.default.get(api, 'consumes', [])),
+        produces: _lodash2.default.get(endpoint, 'produces', _lodash2.default.get(api, 'produces', [])),
+        responses: responseExtractor(api, endpoint)
+    };
 };
 
 var makeJsonicFriendly = exports.makeJsonicFriendly = function makeJsonicFriendly(uri) {
@@ -164,4 +173,43 @@ var makeJsonicFriendly = exports.makeJsonicFriendly = function makeJsonicFriendl
 
 var methodNames = exports.methodNames = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'];
 
-var getAllOpenApiEndpoints = exports.getAllOpenApiEndpoints = getAllSwaggerEndpoints; // The minimal version returns with the same properties
+var swaggerEndpointExtractor = exports.swaggerEndpointExtractor = function swaggerEndpointExtractor(api, endpoint) {
+    return _lodash2.default.chain(_lodash2.default.values(_lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
+        return {
+            status: k,
+            headers: _lodash2.default.get(v, 'headers', {}),
+            examples: _lodash2.default.mapValues(_lodash2.default.get(v, 'examples', {}), function (v, k, o) {
+                return { noname: { mimeType: k, value: v } };
+            })
+        };
+    })).reduce(function (accu, v, k) {
+        accu[v.status] = v;
+        return accu;
+    }, {})).value();
+};
+
+var openApiEndpointExtractor = exports.openApiEndpointExtractor = function openApiEndpointExtractor(api, endpoint) {
+    return _lodash2.default.chain(_lodash2.default.values(_lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
+        return {
+            status: k,
+            headers: _lodash2.default.get(v, 'headers', {}),
+            examples: getExamplesFromV3Content(_lodash2.default.get(v, 'content', {}))
+        };
+    })).reduce(function (accu, v, k) {
+        accu[v.status] = v;
+        return accu;
+    }, {})).value();
+};
+
+var getExamplesFromV3Content = exports.getExamplesFromV3Content = function getExamplesFromV3Content(content, mimeType) {
+    return _lodash2.default.mapValues(content, function (mimeTypeValue, mimeType, mto) {
+        return _lodash2.default.has(mimeTypeValue, 'example') ? { noname: { mimeType: mimeType, value: mimeTypeValue.example } // Return with example
+        } : _lodash2.default.has(mimeTypeValue, 'examples') ? _lodash2.default.mapValues(mimeTypeValue.examples, function (v, k, o) {
+            return {
+                // Return with examples
+                mimeType: mimeType,
+                value: _lodash2.default.has(v, 'externalValue') ? v.externalValue : _lodash2.default.get(v, 'value', null)
+            };
+        }) : {};
+    });
+}; // Neither examples nor example are defined

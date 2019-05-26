@@ -7,7 +7,9 @@ import {
     v2CombinedNonStaticEndpoints,
     v2PetStoreSimpleEndpoints,
     v2PetStoreSimpleOasModel,
-    v3PetStoreSimpleEndpoints
+    v3PetStoreSimpleEndpoints,
+    v2ApiWithExamplesEndpoints,
+    v3ApiWithExamplesEndpoints
 } from './fixtures/'
 
 const oasConfig = {
@@ -90,8 +92,33 @@ describe('oas', () => {
         loadOas(oasFile, oasConfig).then(api => {
             const staticEndpoints = api.getStaticEndpoints()
             staticEndpoints.should.be.eql(v2CombinedStaticEndpoints)
+            done()
+        })
+    })
+
+    it('#getNonStaticEndpoints() - from combined', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/combined/api.yml')
+        loadOas(oasFile, oasConfig).then(api => {
             const nonStaticEndpoints = api.getNonStaticEndpoints()
             nonStaticEndpoints.should.be.eql(v2CombinedNonStaticEndpoints)
+            done()
+        })
+    })
+
+    it('#getEndpoints - from v2.0 with examples', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/api-with-examples.yaml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const endpoints = api.getEndpoints()
+            endpoints.should.be.eql(v2ApiWithExamplesEndpoints)
+            done()
+        })
+    })
+
+    it('#getEndpoints - from v3.0 with examples', done => {
+        const oasFile = path.resolve(oasBasePath, 'v3.0/api-with-examples.yaml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const endpoints = api.getEndpoints()
+            endpoints.should.be.eql(v3ApiWithExamplesEndpoints)
             done()
         })
     })

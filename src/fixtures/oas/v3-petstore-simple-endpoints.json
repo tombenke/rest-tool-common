@@ -4,18 +4,22 @@
         "jsfUri": "/pets",
         "method": "get",
         "operationId": "findPets",
-        "consumes": ["application/json"],
-        "produces": ["application/json", "application/xml", "text/xml", "text/html"],
+        "consumes": [],
+        "produces": [],
         "responses": {
             "200": {
                 "status": "200",
                 "headers": {},
-                "examples": {}
+                "examples": {
+                    "application/json": {}
+                }
             },
             "default": {
                 "status": "default",
                 "headers": {},
-                "examples": {}
+                "examples": {
+                    "application/json": {}
+                }
             }
         }
     },
@@ -24,18 +28,22 @@
         "jsfUri": "/pets",
         "method": "post",
         "operationId": "addPet",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [],
+        "produces": [],
         "responses": {
             "200": {
                 "status": "200",
                 "headers": {},
-                "examples": {}
+                "examples": {
+                    "application/json": {}
+                }
             },
             "default": {
                 "status": "default",
                 "headers": {},
-                "examples": {}
+                "examples": {
+                    "application/json": {}
+                }
             }
         }
     },
@@ -43,19 +51,23 @@
         "uri": "/pets/{id}",
         "jsfUri": "/pets/:id",
         "method": "get",
-        "operationId": "findPetById",
-        "consumes": ["application/json"],
-        "produces": ["application/json", "application/xml", "text/xml", "text/html"],
+        "operationId": "find pet by id",
+        "consumes": [],
+        "produces": [],
         "responses": {
             "200": {
                 "status": "200",
                 "headers": {},
-                "examples": {}
+                "examples": {
+                    "application/json": {}
+                }
             },
             "default": {
                 "status": "default",
                 "headers": {},
-                "examples": {}
+                "examples": {
+                    "application/json": {}
+                }
             }
         }
     },
@@ -64,8 +76,8 @@
         "jsfUri": "/pets/:id",
         "method": "delete",
         "operationId": "deletePet",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [],
+        "produces": [],
         "responses": {
             "204": {
                 "status": "204",
@@ -75,7 +87,9 @@
             "default": {
                 "status": "default",
                 "headers": {},
-                "examples": {}
+                "examples": {
+                    "application/json": {}
+                }
             }
         }
     }

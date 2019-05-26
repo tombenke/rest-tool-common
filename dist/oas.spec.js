@@ -98,8 +98,33 @@ describe('oas', function () {
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var staticEndpoints = api.getStaticEndpoints();
             staticEndpoints.should.be.eql(_fixtures.v2CombinedStaticEndpoints);
+            done();
+        });
+    });
+
+    it('#getNonStaticEndpoints() - from combined', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/combined/api.yml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var nonStaticEndpoints = api.getNonStaticEndpoints();
             nonStaticEndpoints.should.be.eql(_fixtures.v2CombinedNonStaticEndpoints);
+            done();
+        });
+    });
+
+    it('#getEndpoints - from v2.0 with examples', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/api-with-examples.yaml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var endpoints = api.getEndpoints();
+            endpoints.should.be.eql(_fixtures.v2ApiWithExamplesEndpoints);
+            done();
+        });
+    });
+
+    it('#getEndpoints - from v3.0 with examples', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/api-with-examples.yaml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var endpoints = api.getEndpoints();
+            endpoints.should.be.eql(_fixtures.v3ApiWithExamplesEndpoints);
             done();
         });
     });
