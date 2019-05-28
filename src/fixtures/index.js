@@ -10,7 +10,8 @@ export const v2CombinedStaticEndpoints = loadJsonFileSync(__dirname + '/oas/v2-c
 export const v2CombinedNonStaticEndpoints = loadJsonFileSync(__dirname + '/oas/v2-combined-nonstatic-endpoints.json')
 export const oasBasePath = __dirname + '/oas/'
 
-export const removeExamples = endpoints => _.map(endpoints, endpoint => ({
+export const removeExamples = endpoints =>
+    _.map(endpoints, endpoint => ({
         ...endpoint,
-        responses: _.mapValues(endpoint.responses, (v, k, o) => _.omit(v, ['examples'])),
+        responses: _.mapValues(endpoint.responses, (v, k, o) => _.omit(v, ['examples']))
     }))

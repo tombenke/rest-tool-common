@@ -39,7 +39,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var loadOas = exports.loadOas = function loadOas(oasFile) {
     var oasOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     return _swaggerParser2.default.validate(oasFile, oasOptions).then(function (api) {
-
         var endpointOptions = function endpointOptions(options) {
             return _lodash2.default.merge({
                 includeExamples: false

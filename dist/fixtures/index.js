@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-        value: true
+    value: true
 });
 exports.removeExamples = exports.oasBasePath = exports.v2CombinedNonStaticEndpoints = exports.v2CombinedStaticEndpoints = exports.v3ApiWithExamplesEndpoints = exports.v2ApiWithExamplesEndpoints = exports.v3PetStoreSimpleEndpoints = exports.v2PetStoreSimpleEndpoints = exports.v2PetStoreSimpleOasModel = undefined;
 
@@ -25,11 +25,11 @@ var v2CombinedNonStaticEndpoints = exports.v2CombinedNonStaticEndpoints = (0, _d
 var oasBasePath = exports.oasBasePath = __dirname + '/oas/';
 
 var removeExamples = exports.removeExamples = function removeExamples(endpoints) {
-        return _lodash2.default.map(endpoints, function (endpoint) {
-                return _extends({}, endpoint, {
-                        responses: _lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
-                                return _lodash2.default.omit(v, ['examples']);
-                        })
-                });
+    return _lodash2.default.map(endpoints, function (endpoint) {
+        return _extends({}, endpoint, {
+            responses: _lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
+                return _lodash2.default.omit(v, ['examples']);
+            })
         });
+    });
 };

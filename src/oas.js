@@ -25,10 +25,13 @@ import SwaggerParser from 'swagger-parser'
 export const loadOas = (oasFile, oasOptions = {}) =>
     SwaggerParser.validate(oasFile, oasOptions)
         .then(api => {
-
-            const endpointOptions = options => _.merge({
-                includeExamples: false
-            }, options)
+            const endpointOptions = options =>
+                _.merge(
+                    {
+                        includeExamples: false
+                    },
+                    options
+                )
 
             return {
                 /**
@@ -85,8 +88,10 @@ export const loadOas = (oasFile, oasOptions = {}) =>
             return Promise.reject(err)
         })
 
-export const getStaticEndpoints = (oasApi, options) => _.filter(getEndpoints(oasApi, options), endpoint => _.has(endpoint, 'static'))
-export const getNonStaticEndpoints = (oasApi, options) => _.filter(getEndpoints(oasApi, options), endpoint => !_.has(endpoint, 'static'))
+export const getStaticEndpoints = (oasApi, options) =>
+    _.filter(getEndpoints(oasApi, options), endpoint => _.has(endpoint, 'static'))
+export const getNonStaticEndpoints = (oasApi, options) =>
+    _.filter(getEndpoints(oasApi, options), endpoint => !_.has(endpoint, 'static'))
 
 export const getEndpoints = (oasApi, options) =>
     isSwagger(oasApi)
@@ -152,33 +157,33 @@ export const methodNames = ['get', 'put', 'post', 'delete', 'options', 'head', '
 export const swaggerEndpointExtractor = options => (api, endpoint) =>
     _.chain(
         _.values(
-                _.mapValues(endpoint.responses, (v, k, o) => ({
-                    status: k,
-                    headers: _.get(v, 'headers', {}),
-                    examples: _.mapValues(_.get(v, 'examples', {}), (v, k, o) => ({ noname: { mimeType: k, value: v } }))
-                }))
-            )
-            .map(endpoint => options.includeExamples ? endpoint : _.omit(endpoint, ['examples']))
+            _.mapValues(endpoint.responses, (v, k, o) => ({
+                status: k,
+                headers: _.get(v, 'headers', {}),
+                examples: _.mapValues(_.get(v, 'examples', {}), (v, k, o) => ({ noname: { mimeType: k, value: v } }))
+            }))
+        )
+            .map(endpoint => (options.includeExamples ? endpoint : _.omit(endpoint, ['examples'])))
             .reduce((accu, v, k) => {
-                    accu[v.status] = v
-                    return accu
-                }, {})
+                accu[v.status] = v
+                return accu
+            }, {})
     ).value()
 
 export const openApiEndpointExtractor = options => (api, endpoint) =>
     _.chain(
         _.values(
-                _.mapValues(endpoint.responses, (v, k, o) => ({
-                    status: k,
-                    headers: _.get(v, 'headers', {}),
-                    examples: getExamplesFromV3Content(_.get(v, 'content', {}))
-                }))
-            )
-            .map(endpoint => options.includeExamples ? endpoint : _.omit(endpoint, ['examples']))
+            _.mapValues(endpoint.responses, (v, k, o) => ({
+                status: k,
+                headers: _.get(v, 'headers', {}),
+                examples: getExamplesFromV3Content(_.get(v, 'content', {}))
+            }))
+        )
+            .map(endpoint => (options.includeExamples ? endpoint : _.omit(endpoint, ['examples'])))
             .reduce((accu, v, k) => {
-                    accu[v.status] = v
-                    return accu
-                }, {})
+                accu[v.status] = v
+                return accu
+            }, {})
     ).value()
 
 export const getExamplesFromV3Content = (content, mimeType) =>
