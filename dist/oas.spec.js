@@ -79,7 +79,7 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-simple.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var endpoints = api.getEndpoints();
-            endpoints.should.be.eql(_fixtures.v2PetStoreSimpleEndpoints);
+            endpoints.should.be.eql((0, _fixtures.removeExamples)(_fixtures.v2PetStoreSimpleEndpoints));
             done();
         });
     });
@@ -88,7 +88,7 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/petstore-expanded.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var endpoints = api.getEndpoints();
-            endpoints.should.be.eql(_fixtures.v3PetStoreSimpleEndpoints);
+            endpoints.should.be.eql((0, _fixtures.removeExamples)(_fixtures.v3PetStoreSimpleEndpoints));
             done();
         });
     });
@@ -106,24 +106,42 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/combined/api.yml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var nonStaticEndpoints = api.getNonStaticEndpoints();
-            nonStaticEndpoints.should.be.eql(_fixtures.v2CombinedNonStaticEndpoints);
+            nonStaticEndpoints.should.be.eql((0, _fixtures.removeExamples)(_fixtures.v2CombinedNonStaticEndpoints));
             done();
         });
     });
 
-    it('#getEndpoints - from v2.0 with examples', function (done) {
+    it('#getEndpoints - from v2.0 with examples - do not include examples', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/api-with-examples.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var endpoints = api.getEndpoints();
+            endpoints.should.be.eql((0, _fixtures.removeExamples)(_fixtures.v2ApiWithExamplesEndpoints));
+            done();
+        });
+    });
+
+    it('#getEndpoints - from v3.0 with examples - do not include examples', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/api-with-examples.yaml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var endpoints = api.getEndpoints();
+            endpoints.should.be.eql((0, _fixtures.removeExamples)(_fixtures.v3ApiWithExamplesEndpoints));
+            done();
+        });
+    });
+
+    it('#getEndpoints - from v2.0 with examples - include examples', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/api-with-examples.yaml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var endpoints = api.getEndpoints({ includeExamples: true });
             endpoints.should.be.eql(_fixtures.v2ApiWithExamplesEndpoints);
             done();
         });
     });
 
-    it('#getEndpoints - from v3.0 with examples', function (done) {
+    it('#getEndpoints - from v3.0 with examples - include examples', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/api-with-examples.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
-            var endpoints = api.getEndpoints();
+            var endpoints = api.getEndpoints({ includeExamples: true });
             endpoints.should.be.eql(_fixtures.v3ApiWithExamplesEndpoints);
             done();
         });

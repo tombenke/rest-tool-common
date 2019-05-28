@@ -9,7 +9,8 @@ import {
     v2PetStoreSimpleOasModel,
     v3PetStoreSimpleEndpoints,
     v2ApiWithExamplesEndpoints,
-    v3ApiWithExamplesEndpoints
+    v3ApiWithExamplesEndpoints,
+    removeExamples
 } from './fixtures/'
 
 const oasConfig = {
@@ -73,7 +74,7 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-simple.yaml')
         loadOas(oasFile, oasConfig).then(api => {
             const endpoints = api.getEndpoints()
-            endpoints.should.be.eql(v2PetStoreSimpleEndpoints)
+            endpoints.should.be.eql(removeExamples(v2PetStoreSimpleEndpoints))
             done()
         })
     })
@@ -82,7 +83,7 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v3.0/petstore-expanded.yaml')
         loadOas(oasFile, oasConfig).then(api => {
             const endpoints = api.getEndpoints()
-            endpoints.should.be.eql(v3PetStoreSimpleEndpoints)
+            endpoints.should.be.eql(removeExamples(v3PetStoreSimpleEndpoints))
             done()
         })
     })
@@ -100,26 +101,45 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/combined/api.yml')
         loadOas(oasFile, oasConfig).then(api => {
             const nonStaticEndpoints = api.getNonStaticEndpoints()
-            nonStaticEndpoints.should.be.eql(v2CombinedNonStaticEndpoints)
+            nonStaticEndpoints.should.be.eql(removeExamples(v2CombinedNonStaticEndpoints))
             done()
         })
     })
 
-    it('#getEndpoints - from v2.0 with examples', done => {
+    it('#getEndpoints - from v2.0 with examples - do not include examples', done => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/api-with-examples.yaml')
         loadOas(oasFile, oasConfig).then(api => {
             const endpoints = api.getEndpoints()
+            endpoints.should.be.eql(removeExamples(v2ApiWithExamplesEndpoints))
+            done()
+        })
+    })
+
+    it('#getEndpoints - from v3.0 with examples - do not include examples', done => {
+        const oasFile = path.resolve(oasBasePath, 'v3.0/api-with-examples.yaml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const endpoints = api.getEndpoints()
+            endpoints.should.be.eql(removeExamples(v3ApiWithExamplesEndpoints))
+            done()
+        })
+    })
+
+    it('#getEndpoints - from v2.0 with examples - include examples', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/api-with-examples.yaml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const endpoints = api.getEndpoints({ includeExamples: true })
             endpoints.should.be.eql(v2ApiWithExamplesEndpoints)
             done()
         })
     })
 
-    it('#getEndpoints - from v3.0 with examples', done => {
+    it('#getEndpoints - from v3.0 with examples - include examples', done => {
         const oasFile = path.resolve(oasBasePath, 'v3.0/api-with-examples.yaml')
         loadOas(oasFile, oasConfig).then(api => {
-            const endpoints = api.getEndpoints()
+            const endpoints = api.getEndpoints({ includeExamples: true })
             endpoints.should.be.eql(v3ApiWithExamplesEndpoints)
             done()
         })
     })
+
 })

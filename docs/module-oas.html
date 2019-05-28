@@ -201,7 +201,7 @@ and provides the service endpoint descriptors</p></div>
     
 
     
-    <h4 class="name" id=".loadOas"><span class="type-signature">(async, static) </span>loadOas<span class="signature">(oasFile, options)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id=".loadOas"><span class="type-signature">(async, static) </span>loadOas<span class="signature">(oasFile, oasOptions, endpointOptions)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -273,7 +273,7 @@ It also can be a swagger object.</p>
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>oasOptions</code></td>
             
 
             <td class="type">
@@ -290,6 +290,29 @@ It also can be a swagger object.</p>
             
 
             <td class="description last"><p>The options of the loader. See <a href="https://apidevtools.org/swagger-parser/docs/options.html">swagger-parser options</a> for details.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>endpointOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options of the endpoint descriptors. See defaultEndpointOptions for details.</p></td>
         </tr>
 
     
@@ -402,6 +425,51 @@ It also can be a swagger object.</p>
 
 
 
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options that control the details of endpoints of the API. Optional. Defaults: <code>{ includeExamples: false }</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
 
 
 
@@ -507,6 +575,51 @@ It also can be a swagger object.</p>
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options that control the details of endpoints of the API. Optional. Defaults: <code>{ includeExamples: false }</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -697,6 +810,51 @@ It also can be a swagger object.</p>
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options that control the details of endpoints of the API. Optional. Defaults: <code>{ includeExamples: false }</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 

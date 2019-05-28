@@ -14,16 +14,22 @@ import SwaggerParser from 'swagger-parser'
  * It also can be a swagger object.
  *
  * @arg {String|Object} oasFile - The path string of the root file of the API specification, or a swagger object.
- * @arg {Object} options - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
+ * @arg {Object} oasOptions - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
+ * @arg {Object} endpointOptions - The options of the endpoint descriptors. See defaultEndpointOptions for details.
  *
  * @return {Promise} A Promise, that resolves to an API descriptor object, that provides inner functions to access to the individual endpoints as well as to the whole loaded model.
  *
  * @function
  * @async
  */
-export const loadOas = (oasFile, options = {}) =>
-    SwaggerParser.validate(oasFile, options)
+export const loadOas = (oasFile, oasOptions = {}) =>
+    SwaggerParser.validate(oasFile, oasOptions)
         .then(api => {
+
+            const endpointOptions = options => _.merge({
+                includeExamples: false
+            }, options)
+
             return {
                 /**
                  * The Original OpenAPI model as it was loaded
@@ -52,38 +58,41 @@ export const loadOas = (oasFile, options = {}) =>
 
                 /**
                  * Get all the endpoins defined by the API
+                 * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
                  * @return {Array} - The array of endpoints of the API
                  * @function
                  */
-                getEndpoints: () => getEndpoints(api),
+                getEndpoints: (options = {}) => getEndpoints(api, endpointOptions(options)),
 
                 /**
                  * Get the static endpoins defined by the API
+                 * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
                  * @return {Array} - The array of static endpoints of the API
                  * @function
                  */
-                getStaticEndpoints: () => getStaticEndpoints(api),
+                getStaticEndpoints: (options = {}) => getStaticEndpoints(api, endpointOptions(options)),
 
                 /**
                  * Get the normal REST endpoins defined by the API
+                 * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
                  * @return {Array} - The array of normal, (non-static, REST) endpoints of the API
                  * @function
                  */
-                getNonStaticEndpoints: () => getNonStaticEndpoints(api)
+                getNonStaticEndpoints: (options = {}) => getNonStaticEndpoints(api, endpointOptions(options))
             }
         })
         .catch(err => {
             return Promise.reject(err)
         })
 
-export const getStaticEndpoints = oasApi => _.filter(getEndpoints(oasApi), endpoint => _.has(endpoint, 'static'))
-export const getNonStaticEndpoints = oasApi => _.filter(getEndpoints(oasApi), endpoint => !_.has(endpoint, 'static'))
+export const getStaticEndpoints = (oasApi, options) => _.filter(getEndpoints(oasApi, options), endpoint => _.has(endpoint, 'static'))
+export const getNonStaticEndpoints = (oasApi, options) => _.filter(getEndpoints(oasApi, options), endpoint => !_.has(endpoint, 'static'))
 
-export const getEndpoints = oasApi =>
+export const getEndpoints = (oasApi, options) =>
     isSwagger(oasApi)
-        ? getAllEndpoints(oasApi, swaggerEndpointExtractor)
+        ? getAllEndpoints(oasApi, swaggerEndpointExtractor(options))
         : isOpenApi(oasApi)
-        ? getAllEndpoints(oasApi, openApiEndpointExtractor)
+        ? getAllEndpoints(oasApi, openApiEndpointExtractor(options))
         : []
 
 export const isSwagger = oasApi => _.get(oasApi, 'swagger', '').match(/^2\.0.*/)
@@ -140,32 +149,36 @@ export const makeJsonicFriendly = uri => uri.replace(/\{/g, ':').replace(/\}/g, 
 
 export const methodNames = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch']
 
-export const swaggerEndpointExtractor = (api, endpoint) =>
+export const swaggerEndpointExtractor = options => (api, endpoint) =>
     _.chain(
         _.values(
-            _.mapValues(endpoint.responses, (v, k, o) => ({
-                status: k,
-                headers: _.get(v, 'headers', {}),
-                examples: _.mapValues(_.get(v, 'examples', {}), (v, k, o) => ({ noname: { mimeType: k, value: v } }))
-            }))
-        ).reduce((accu, v, k) => {
-            accu[v.status] = v
-            return accu
-        }, {})
+                _.mapValues(endpoint.responses, (v, k, o) => ({
+                    status: k,
+                    headers: _.get(v, 'headers', {}),
+                    examples: _.mapValues(_.get(v, 'examples', {}), (v, k, o) => ({ noname: { mimeType: k, value: v } }))
+                }))
+            )
+            .map(endpoint => options.includeExamples ? endpoint : _.omit(endpoint, ['examples']))
+            .reduce((accu, v, k) => {
+                    accu[v.status] = v
+                    return accu
+                }, {})
     ).value()
 
-export const openApiEndpointExtractor = (api, endpoint) =>
+export const openApiEndpointExtractor = options => (api, endpoint) =>
     _.chain(
         _.values(
-            _.mapValues(endpoint.responses, (v, k, o) => ({
-                status: k,
-                headers: _.get(v, 'headers', {}),
-                examples: getExamplesFromV3Content(_.get(v, 'content', {}))
-            }))
-        ).reduce((accu, v, k) => {
-            accu[v.status] = v
-            return accu
-        }, {})
+                _.mapValues(endpoint.responses, (v, k, o) => ({
+                    status: k,
+                    headers: _.get(v, 'headers', {}),
+                    examples: getExamplesFromV3Content(_.get(v, 'content', {}))
+                }))
+            )
+            .map(endpoint => options.includeExamples ? endpoint : _.omit(endpoint, ['examples']))
+            .reduce((accu, v, k) => {
+                    accu[v.status] = v
+                    return accu
+                }, {})
     ).value()
 
 export const getExamplesFromV3Content = (content, mimeType) =>

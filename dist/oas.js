@@ -28,7 +28,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * It also can be a swagger object.
  *
  * @arg {String|Object} oasFile - The path string of the root file of the API specification, or a swagger object.
- * @arg {Object} options - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
+ * @arg {Object} oasOptions - The options of the loader. See [swagger-parser options](https://apidevtools.org/swagger-parser/docs/options.html) for details.
+ * @arg {Object} endpointOptions - The options of the endpoint descriptors. See defaultEndpointOptions for details.
  *
  * @return {Promise} A Promise, that resolves to an API descriptor object, that provides inner functions to access to the individual endpoints as well as to the whole loaded model.
  *
@@ -36,8 +37,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @async
  */
 var loadOas = exports.loadOas = function loadOas(oasFile) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    return _swaggerParser2.default.validate(oasFile, options).then(function (api) {
+    var oasOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    return _swaggerParser2.default.validate(oasFile, oasOptions).then(function (api) {
+
+        var endpointOptions = function endpointOptions(options) {
+            return _lodash2.default.merge({
+                includeExamples: false
+            }, options);
+        };
+
         return {
             /**
              * The Original OpenAPI model as it was loaded
@@ -72,29 +80,35 @@ var loadOas = exports.loadOas = function loadOas(oasFile) {
 
             /**
              * Get all the endpoins defined by the API
+             * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
              * @return {Array} - The array of endpoints of the API
              * @function
              */
             getEndpoints: function getEndpoints() {
-                return _getEndpoints(api);
+                var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+                return _getEndpoints(api, endpointOptions(options));
             },
 
             /**
              * Get the static endpoins defined by the API
+             * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
              * @return {Array} - The array of static endpoints of the API
              * @function
              */
             getStaticEndpoints: function getStaticEndpoints() {
-                return _getStaticEndpoints(api);
+                var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+                return _getStaticEndpoints(api, endpointOptions(options));
             },
 
             /**
              * Get the normal REST endpoins defined by the API
+             * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
              * @return {Array} - The array of normal, (non-static, REST) endpoints of the API
              * @function
              */
             getNonStaticEndpoints: function getNonStaticEndpoints() {
-                return _getNonStaticEndpoints(api);
+                var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+                return _getNonStaticEndpoints(api, endpointOptions(options));
             }
         };
     }).catch(function (err) {
@@ -102,21 +116,21 @@ var loadOas = exports.loadOas = function loadOas(oasFile) {
     });
 };
 
-var _getStaticEndpoints = function _getStaticEndpoints(oasApi) {
-    return _lodash2.default.filter(_getEndpoints(oasApi), function (endpoint) {
+var _getStaticEndpoints = function _getStaticEndpoints(oasApi, options) {
+    return _lodash2.default.filter(_getEndpoints(oasApi, options), function (endpoint) {
         return _lodash2.default.has(endpoint, 'static');
     });
 };
 exports.getStaticEndpoints = _getStaticEndpoints;
-var _getNonStaticEndpoints = function _getNonStaticEndpoints(oasApi) {
-    return _lodash2.default.filter(_getEndpoints(oasApi), function (endpoint) {
+var _getNonStaticEndpoints = function _getNonStaticEndpoints(oasApi, options) {
+    return _lodash2.default.filter(_getEndpoints(oasApi, options), function (endpoint) {
         return !_lodash2.default.has(endpoint, 'static');
     });
 };
 
 exports.getNonStaticEndpoints = _getNonStaticEndpoints;
-var _getEndpoints = function _getEndpoints(oasApi) {
-    return isSwagger(oasApi) ? getAllEndpoints(oasApi, swaggerEndpointExtractor) : isOpenApi(oasApi) ? getAllEndpoints(oasApi, openApiEndpointExtractor) : [];
+var _getEndpoints = function _getEndpoints(oasApi, options) {
+    return isSwagger(oasApi) ? getAllEndpoints(oasApi, swaggerEndpointExtractor(options)) : isOpenApi(oasApi) ? getAllEndpoints(oasApi, openApiEndpointExtractor(options)) : [];
 };
 
 exports.getEndpoints = _getEndpoints;
@@ -173,32 +187,40 @@ var makeJsonicFriendly = exports.makeJsonicFriendly = function makeJsonicFriendl
 
 var methodNames = exports.methodNames = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'];
 
-var swaggerEndpointExtractor = exports.swaggerEndpointExtractor = function swaggerEndpointExtractor(api, endpoint) {
-    return _lodash2.default.chain(_lodash2.default.values(_lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
-        return {
-            status: k,
-            headers: _lodash2.default.get(v, 'headers', {}),
-            examples: _lodash2.default.mapValues(_lodash2.default.get(v, 'examples', {}), function (v, k, o) {
-                return { noname: { mimeType: k, value: v } };
-            })
-        };
-    })).reduce(function (accu, v, k) {
-        accu[v.status] = v;
-        return accu;
-    }, {})).value();
+var swaggerEndpointExtractor = exports.swaggerEndpointExtractor = function swaggerEndpointExtractor(options) {
+    return function (api, endpoint) {
+        return _lodash2.default.chain(_lodash2.default.values(_lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
+            return {
+                status: k,
+                headers: _lodash2.default.get(v, 'headers', {}),
+                examples: _lodash2.default.mapValues(_lodash2.default.get(v, 'examples', {}), function (v, k, o) {
+                    return { noname: { mimeType: k, value: v } };
+                })
+            };
+        })).map(function (endpoint) {
+            return options.includeExamples ? endpoint : _lodash2.default.omit(endpoint, ['examples']);
+        }).reduce(function (accu, v, k) {
+            accu[v.status] = v;
+            return accu;
+        }, {})).value();
+    };
 };
 
-var openApiEndpointExtractor = exports.openApiEndpointExtractor = function openApiEndpointExtractor(api, endpoint) {
-    return _lodash2.default.chain(_lodash2.default.values(_lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
-        return {
-            status: k,
-            headers: _lodash2.default.get(v, 'headers', {}),
-            examples: getExamplesFromV3Content(_lodash2.default.get(v, 'content', {}))
-        };
-    })).reduce(function (accu, v, k) {
-        accu[v.status] = v;
-        return accu;
-    }, {})).value();
+var openApiEndpointExtractor = exports.openApiEndpointExtractor = function openApiEndpointExtractor(options) {
+    return function (api, endpoint) {
+        return _lodash2.default.chain(_lodash2.default.values(_lodash2.default.mapValues(endpoint.responses, function (v, k, o) {
+            return {
+                status: k,
+                headers: _lodash2.default.get(v, 'headers', {}),
+                examples: getExamplesFromV3Content(_lodash2.default.get(v, 'content', {}))
+            };
+        })).map(function (endpoint) {
+            return options.includeExamples ? endpoint : _lodash2.default.omit(endpoint, ['examples']);
+        }).reduce(function (accu, v, k) {
+            accu[v.status] = v;
+            return accu;
+        }, {})).value();
+    };
 };
 
 var getExamplesFromV3Content = exports.getExamplesFromV3Content = function getExamplesFromV3Content(content, mimeType) {
