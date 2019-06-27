@@ -100,11 +100,7 @@ export const loadOas = (oasFile, oasOptions = {}) =>
         })
 
 export const getServers = oasApi =>
-    isSwagger(oasApi)
-        ? getSwaggerServers(oasApi)
-        : isOpenApi(oasApi)
-        ? getOpenApiServers(oasApi)
-        : [ defaultServer ]
+    isSwagger(oasApi) ? getSwaggerServers(oasApi) : isOpenApi(oasApi) ? getOpenApiServers(oasApi) : [defaultServer]
 
 export const getStaticEndpoints = (oasApi, options) =>
     _.filter(getEndpoints(oasApi, options), endpoint => _.has(endpoint, 'static'))

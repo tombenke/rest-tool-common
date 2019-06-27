@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.removeExamples = exports.oasBasePath = exports.v2CombinedNonStaticEndpoints = exports.v2CombinedStaticEndpoints = exports.v3ApiWithExamplesEndpoints = exports.v2ApiWithExamplesEndpoints = exports.v3PetStoreSimpleEndpoints = exports.v2PetStoreSimpleEndpoints = exports.v2PetStoreSimpleOasModel = undefined;
+exports.oasModels = exports.removeExamples = exports.oasBasePath = exports.v2CombinedNonStaticEndpoints = exports.v2CombinedStaticEndpoints = exports.v3ApiWithExamplesEndpoints = exports.v2ApiWithExamplesEndpoints = exports.v3PetStoreSimpleEndpoints = exports.v2PetStoreSimpleEndpoints = exports.v2PetStoreSimpleOasModel = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -33,3 +33,5 @@ var removeExamples = exports.removeExamples = function removeExamples(endpoints)
         });
     });
 };
+
+var oasModels = exports.oasModels = (0, _datafile.loadJsonFileSync)(__dirname + '/oas/servers.yml');

@@ -75,6 +75,16 @@ describe('oas', function () {
         });
     });
 
+    it('#getServers', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/petstore.yaml');
+        var expected = [{ protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/v1' }];
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var apiServers = api.getServers();
+            apiServers.should.be.eql(expected);
+            done();
+        });
+    });
+
     it('#getEndpoints - from v2.0', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-simple.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
@@ -133,6 +143,7 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/api-with-examples.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var endpoints = api.getEndpoints({ includeExamples: true });
+            //console.log(JSON.stringify(endpoints, null, 2))
             endpoints.should.be.eql(_fixtures.v2ApiWithExamplesEndpoints);
             done();
         });
@@ -142,8 +153,19 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/api-with-examples.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var endpoints = api.getEndpoints({ includeExamples: true });
+            //console.log(JSON.stringify(endpoints, null, 2))
             endpoints.should.be.eql(_fixtures.v3ApiWithExamplesEndpoints);
             done();
         });
     });
+    /*
+    it('#getEndpoints - from v3.0 with examples - include examples', done => {
+        const oasFile = path.resolve(oasBasePath, '/home/tombenke/sandbox/easer/rest-api/api.yml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const endpoints = api.getEndpoints({ includeExamples: true })
+            console.log(JSON.stringify(endpoints, null, 2))
+            done()
+        })
+    })
+    */
 });

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getExamplesFromV3Content = exports.openApiEndpointExtractor = exports.swaggerEndpointExtractor = exports.methodNames = exports.makeJsonicFriendly = exports.makeOperationEndpoint = exports.makeStaticEndpoint = exports.getAllEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.getNonStaticEndpoints = exports.getStaticEndpoints = exports.loadOas = undefined;
+exports.getExamplesFromV3Content = exports.openApiEndpointExtractor = exports.swaggerEndpointExtractor = exports.methodNames = exports.makeJsonicFriendly = exports.makeOperationEndpoint = exports.makeStaticEndpoint = exports.getAllEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.getNonStaticEndpoints = exports.getStaticEndpoints = exports.getServers = exports.loadOas = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
                                                                                                                                                                                                                                                                    * A module that loads swagger and OpenAPI 3.0 format API specifications
@@ -19,6 +19,8 @@ var _lodash2 = _interopRequireDefault(_lodash);
 var _swaggerParser = require('swagger-parser');
 
 var _swaggerParser2 = _interopRequireDefault(_swaggerParser);
+
+var _servers = require('./servers');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -78,6 +80,18 @@ var loadOas = exports.loadOas = function loadOas(oasFile) {
             },
 
             /**
+             * Get the list of servers
+             * @return {Array} - The array of server descriptor objects.
+             * Each server descriptor holds the details about the servers like it is defined for the swagger 2.0 format files:
+             * `{ host, basePath, schemes: [] }`.
+             * OpenApi v3 format files are converted to this format as well.
+             * @function
+             */
+            getServers: function getServers() {
+                return _getServers(api);
+            },
+
+            /**
              * Get all the endpoins defined by the API
              * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
              * @return {Array} - The array of endpoints of the API
@@ -115,6 +129,11 @@ var loadOas = exports.loadOas = function loadOas(oasFile) {
     });
 };
 
+var _getServers = function _getServers(oasApi) {
+    return isSwagger(oasApi) ? (0, _servers.getSwaggerServers)(oasApi) : isOpenApi(oasApi) ? (0, _servers.getOpenApiServers)(oasApi) : [_servers.defaultServer];
+};
+
+exports.getServers = _getServers;
 var _getStaticEndpoints = function _getStaticEndpoints(oasApi, options) {
     return _lodash2.default.filter(_getEndpoints(oasApi, options), function (endpoint) {
         return _lodash2.default.has(endpoint, 'static');

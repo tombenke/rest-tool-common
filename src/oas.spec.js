@@ -72,7 +72,7 @@ describe('oas', () => {
 
     it('#getServers', done => {
         const oasFile = path.resolve(oasBasePath, 'v3.0/petstore.yaml')
-        const expected = [ { protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/v1' } ]
+        const expected = [{ protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/v1' }]
         loadOas(oasFile, oasConfig).then(api => {
             const apiServers = api.getServers()
             apiServers.should.be.eql(expected)
@@ -153,7 +153,7 @@ describe('oas', () => {
             done()
         })
     })
-/*
+    /*
     it('#getEndpoints - from v3.0 with examples - include examples', done => {
         const oasFile = path.resolve(oasBasePath, '/home/tombenke/sandbox/easer/rest-api/api.yml')
         loadOas(oasFile, oasConfig).then(api => {

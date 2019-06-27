@@ -1,10 +1,8 @@
-import path from 'path'
 import should from 'should'
-import { getSwaggerServers, getOpenApiServers, defaultServer } from './servers'
+import { getSwaggerServers, getOpenApiServers } from './servers'
 import { oasModels } from './fixtures/'
 
 describe('servers', () => {
-
     const testGetSwaggerServers = testCase => {
         const oasModel = testCase.config
         const expected = testCase.expected
