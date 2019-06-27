@@ -75,9 +75,9 @@ var getServerDetails = exports.getServerDetails = function getServerDetails(serv
         path = _url$parse.path;
 
     return {
-        protocol: protocol !== null ? protocol.replace(':', '') : defaultServer.protocol,
-        hostName: hostname !== null ? hostname : defaultServer.hostName,
+        protocol: protocol.replace(':', ''),
+        hostName: hostname,
         port: port !== null ? parseInt(port, 10) : defaultServer.port,
-        basePath: path !== null ? path : defaultServer.basePath
+        basePath: path
     };
 };
