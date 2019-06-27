@@ -15,3 +15,5 @@ export const removeExamples = endpoints =>
         ...endpoint,
         responses: _.mapValues(endpoint.responses, (v, k, o) => _.omit(v, ['examples']))
     }))
+
+export const oasModels = loadJsonFileSync(__dirname + '/oas/servers.yml')

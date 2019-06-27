@@ -7,6 +7,7 @@
 
 import _ from 'lodash'
 import SwaggerParser from 'swagger-parser'
+import { getSwaggerServers, getOpenApiServers, defaultServer } from './servers'
 
 /**
  * Load swagger and/or OpenAPI specification
@@ -60,6 +61,16 @@ export const loadOas = (oasFile, oasOptions = {}) =>
                 getVersion: () => api.info.version,
 
                 /**
+                 * Get the list of servers
+                 * @return {Array} - The array of server descriptor objects.
+                 * Each server descriptor holds the details about the servers like it is defined for the swagger 2.0 format files:
+                 * `{ host, basePath, schemes: [] }`.
+                 * OpenApi v3 format files are converted to this format as well.
+                 * @function
+                 */
+                getServers: () => getServers(api),
+
+                /**
                  * Get all the endpoins defined by the API
                  * @arg {Object} - The options that control the details of endpoints of the API. Optional. Defaults: `{ includeExamples: false }`.
                  * @return {Array} - The array of endpoints of the API
@@ -87,6 +98,13 @@ export const loadOas = (oasFile, oasOptions = {}) =>
         .catch(err => {
             return Promise.reject(err)
         })
+
+export const getServers = oasApi =>
+    isSwagger(oasApi)
+        ? getSwaggerServers(oasApi)
+        : isOpenApi(oasApi)
+        ? getOpenApiServers(oasApi)
+        : [ defaultServer ]
 
 export const getStaticEndpoints = (oasApi, options) =>
     _.filter(getEndpoints(oasApi, options), endpoint => _.has(endpoint, 'static'))

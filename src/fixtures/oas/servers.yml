@@ -1,0 +1,88 @@
+v2:
+  none:
+    config: {}
+    expected:
+      - protocol: http
+        hostName: localhost
+        port: 80
+        basePath: /
+
+  plain:
+    config:
+      host: localhost
+      basePath: /
+    expected:
+      - protocol: http
+        hostName: localhost
+        port: 80
+        basePath: /
+
+  withPort:
+    config:
+      host: "localhost:8080"
+      basePath: /
+    expected:
+      - protocol: http
+        hostName: localhost
+        port: 8080
+        basePath: /
+
+  withPortAndSchemas:
+    config:
+      host: "localhost:8081"
+      basePath: /
+      schemas:
+        - "http"
+        - "https"
+
+    expected:
+      - protocol: "http"
+        hostName: localhost
+        port: 8081
+        basePath: /
+
+      - protocol: "https"
+        hostName: localhost
+        port: 8081
+        basePath: /
+
+v3:
+  none:
+    config: {}
+    expected:
+      - protocol: http
+        hostName: localhost
+        port: 80
+        basePath: /
+
+  plain:
+    config:
+      servers:
+        - url: "http://petstore.swagger.io/api"
+    expected:
+      - protocol: http
+        hostName: petstore.swagger.io
+        port: 80
+        basePath: /api
+
+
+  plainWithPort:
+    config:
+      servers:
+        - url: "https://petstore.swagger.io:8224/api"
+    expected:
+      - protocol: https
+        hostName: petstore.swagger.io
+        port: 8224
+        basePath: /api
+
+#  variables:
+#    - url: '{scheme}://developer.uspto.gov/ds-api'
+#      variables:
+#        scheme:
+#          description: 'The Data Set API is accessible via https and http'
+#          enum:
+#            - 'https'
+#            - 'http'
+#          default: 'https'
+#
