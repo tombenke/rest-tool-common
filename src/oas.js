@@ -168,8 +168,7 @@ export const makeOperationEndpoint = (api, endpoint, responseExtractor) => {
     }
 }
 
-export const collectResponseMediaTypes = responses =>
-    _.uniq(_.flatMap(responses, response => _.keys(response.content)))
+export const collectResponseMediaTypes = responses => _.uniq(_.flatMap(responses, response => _.keys(response.content)))
 
 export const makeJsonicFriendly = uri => uri.replace(/\{/g, ':').replace(/\}/g, '')
 

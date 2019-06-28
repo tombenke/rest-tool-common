@@ -88,7 +88,6 @@ describe('oas', () => {
         })
     })
 
-
     it('#getServers - v3.0', done => {
         const oasFile = path.resolve(oasBasePath, 'v3.0/petstore.yaml')
         const expected = [{ protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/v1' }]
