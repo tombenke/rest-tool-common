@@ -41,6 +41,14 @@ describe('oas', function () {
         });
     });
 
+    it('#loadOas() - from swagger object - default config', function (done) {
+        (0, _oas.loadOas)(_fixtures.v2PetStoreSimpleOasModel).then(function (api) {
+            var oasModel = api.getOasModel();
+            oasModel.should.be.eql(_fixtures.v2PetStoreSimpleOasModel);
+            done();
+        });
+    });
+
     it('#loadOas() - fails', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'non-existing-api-file');
         (0, _oas.loadOas)(oasFile, oasConfig).catch(function (res) {
@@ -75,7 +83,17 @@ describe('oas', function () {
         });
     });
 
-    it('#getServers', function (done) {
+    it('#getServers - v2.0', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml');
+        var expected = [{ protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/api' }];
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var apiServers = api.getServers();
+            apiServers.should.be.eql(expected);
+            done();
+        });
+    });
+
+    it('#getServers - v3.0', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/petstore.yaml');
         var expected = [{ protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/v1' }];
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
@@ -112,10 +130,28 @@ describe('oas', function () {
         });
     });
 
+    it('#getStaticEndpoints() - from combined with options', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/combined/api.yml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var staticEndpoints = api.getStaticEndpoints({});
+            staticEndpoints.should.be.eql(_fixtures.v2CombinedStaticEndpoints);
+            done();
+        });
+    });
+
     it('#getNonStaticEndpoints() - from combined', function (done) {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/combined/api.yml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var nonStaticEndpoints = api.getNonStaticEndpoints();
+            nonStaticEndpoints.should.be.eql((0, _fixtures.removeExamples)(_fixtures.v2CombinedNonStaticEndpoints));
+            done();
+        });
+    });
+
+    it('#getNonStaticEndpoints() - from combined with options', function (done) {
+        var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/combined/api.yml');
+        (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
+            var nonStaticEndpoints = api.getNonStaticEndpoints({});
             nonStaticEndpoints.should.be.eql((0, _fixtures.removeExamples)(_fixtures.v2CombinedNonStaticEndpoints));
             done();
         });
@@ -143,7 +179,6 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v2.0/yaml/api-with-examples.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var endpoints = api.getEndpoints({ includeExamples: true });
-            //console.log(JSON.stringify(endpoints, null, 2))
             endpoints.should.be.eql(_fixtures.v2ApiWithExamplesEndpoints);
             done();
         });
@@ -153,19 +188,8 @@ describe('oas', function () {
         var oasFile = _path2.default.resolve(_fixtures.oasBasePath, 'v3.0/api-with-examples.yaml');
         (0, _oas.loadOas)(oasFile, oasConfig).then(function (api) {
             var endpoints = api.getEndpoints({ includeExamples: true });
-            //console.log(JSON.stringify(endpoints, null, 2))
             endpoints.should.be.eql(_fixtures.v3ApiWithExamplesEndpoints);
             done();
         });
     });
-    /*
-    it('#getEndpoints - from v3.0 with examples - include examples', done => {
-        const oasFile = path.resolve(oasBasePath, '/home/tombenke/sandbox/easer/rest-api/api.yml')
-        loadOas(oasFile, oasConfig).then(api => {
-            const endpoints = api.getEndpoints({ includeExamples: true })
-            console.log(JSON.stringify(endpoints, null, 2))
-            done()
-        })
-    })
-    */
 });

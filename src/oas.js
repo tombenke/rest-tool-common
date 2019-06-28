@@ -154,15 +154,22 @@ export const makeStaticEndpoint = (swaggerApi, endpoint) => ({
     static: endpoint['x-static']
 })
 
-export const makeOperationEndpoint = (api, endpoint, responseExtractor) => ({
-    uri: endpoint.uri,
-    jsfUri: endpoint.jsfUri,
-    method: endpoint.method,
-    operationId: _.get(endpoint, 'operationId', null),
-    consumes: _.get(endpoint, 'consumes', _.get(api, 'consumes', [])),
-    produces: _.get(endpoint, 'produces', _.get(api, 'produces', [])),
-    responses: responseExtractor(api, endpoint)
-})
+export const makeOperationEndpoint = (api, endpoint, responseExtractor) => {
+    const responses = responseExtractor(api, endpoint)
+    const responseMediaTypes = collectResponseMediaTypes(responses)
+    return {
+        uri: endpoint.uri,
+        jsfUri: endpoint.jsfUri,
+        method: endpoint.method,
+        operationId: _.get(endpoint, 'operationId', null),
+        consumes: _.get(endpoint, 'consumes', _.get(api, 'consumes', [])),
+        produces: _.merge(_.get(endpoint, 'produces', _.get(api, 'produces', [])), responseMediaTypes),
+        responses: _.mapValues(responses, response => _.omit(response, ['content']))
+    }
+}
+
+export const collectResponseMediaTypes = responses =>
+    _.uniq(_.flatMap(responses, response => _.keys(response.content)))
 
 export const makeJsonicFriendly = uri => uri.replace(/\{/g, ':').replace(/\}/g, '')
 
@@ -190,10 +197,11 @@ export const openApiEndpointExtractor = options => (api, endpoint) =>
             _.mapValues(endpoint.responses, (v, k, o) => ({
                 status: k,
                 headers: _.get(v, 'headers', {}),
+                content: _.get(v, 'content', {}),
                 examples: getExamplesFromV3Content(_.get(v, 'content', {}))
             }))
         )
-            .map(endpoint => (options.includeExamples ? endpoint : _.omit(endpoint, ['examples'])))
+            .map(response => (options.includeExamples ? response : _.omit(response, ['examples'])))
             .reduce((accu, v, k) => {
                 accu[v.status] = v
                 return accu

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getExamplesFromV3Content = exports.openApiEndpointExtractor = exports.swaggerEndpointExtractor = exports.methodNames = exports.makeJsonicFriendly = exports.makeOperationEndpoint = exports.makeStaticEndpoint = exports.getAllEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.getNonStaticEndpoints = exports.getStaticEndpoints = exports.getServers = exports.loadOas = undefined;
+exports.getExamplesFromV3Content = exports.openApiEndpointExtractor = exports.swaggerEndpointExtractor = exports.methodNames = exports.makeJsonicFriendly = exports.collectResponseMediaTypes = exports.makeOperationEndpoint = exports.makeStaticEndpoint = exports.getAllEndpoints = exports.isOpenApi = exports.isSwagger = exports.getEndpoints = exports.getNonStaticEndpoints = exports.getStaticEndpoints = exports.getServers = exports.loadOas = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
                                                                                                                                                                                                                                                                    * A module that loads swagger and OpenAPI 3.0 format API specifications
@@ -188,15 +188,25 @@ var makeStaticEndpoint = exports.makeStaticEndpoint = function makeStaticEndpoin
 };
 
 var makeOperationEndpoint = exports.makeOperationEndpoint = function makeOperationEndpoint(api, endpoint, responseExtractor) {
+    var responses = responseExtractor(api, endpoint);
+    var responseMediaTypes = collectResponseMediaTypes(responses);
     return {
         uri: endpoint.uri,
         jsfUri: endpoint.jsfUri,
         method: endpoint.method,
         operationId: _lodash2.default.get(endpoint, 'operationId', null),
         consumes: _lodash2.default.get(endpoint, 'consumes', _lodash2.default.get(api, 'consumes', [])),
-        produces: _lodash2.default.get(endpoint, 'produces', _lodash2.default.get(api, 'produces', [])),
-        responses: responseExtractor(api, endpoint)
+        produces: _lodash2.default.merge(_lodash2.default.get(endpoint, 'produces', _lodash2.default.get(api, 'produces', [])), responseMediaTypes),
+        responses: _lodash2.default.mapValues(responses, function (response) {
+            return _lodash2.default.omit(response, ['content']);
+        })
     };
+};
+
+var collectResponseMediaTypes = exports.collectResponseMediaTypes = function collectResponseMediaTypes(responses) {
+    return _lodash2.default.uniq(_lodash2.default.flatMap(responses, function (response) {
+        return _lodash2.default.keys(response.content);
+    }));
 };
 
 var makeJsonicFriendly = exports.makeJsonicFriendly = function makeJsonicFriendly(uri) {
@@ -230,10 +240,11 @@ var openApiEndpointExtractor = exports.openApiEndpointExtractor = function openA
             return {
                 status: k,
                 headers: _lodash2.default.get(v, 'headers', {}),
+                content: _lodash2.default.get(v, 'content', {}),
                 examples: getExamplesFromV3Content(_lodash2.default.get(v, 'content', {}))
             };
-        })).map(function (endpoint) {
-            return options.includeExamples ? endpoint : _lodash2.default.omit(endpoint, ['examples']);
+        })).map(function (response) {
+            return options.includeExamples ? response : _lodash2.default.omit(response, ['examples']);
         }).reduce(function (accu, v, k) {
             accu[v.status] = v;
             return accu;

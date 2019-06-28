@@ -38,6 +38,14 @@ describe('oas', () => {
         })
     })
 
+    it('#loadOas() - from swagger object - default config', done => {
+        loadOas(v2PetStoreSimpleOasModel).then(api => {
+            const oasModel = api.getOasModel()
+            oasModel.should.be.eql(v2PetStoreSimpleOasModel)
+            done()
+        })
+    })
+
     it('#loadOas() - fails', done => {
         const oasFile = path.resolve(oasBasePath, 'non-existing-api-file')
         loadOas(oasFile, oasConfig).catch(res => done())
@@ -70,7 +78,18 @@ describe('oas', () => {
         })
     })
 
-    it('#getServers', done => {
+    it('#getServers - v2.0', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/petstore-separate/spec/swagger.yaml')
+        const expected = [{ protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/api' }]
+        loadOas(oasFile, oasConfig).then(api => {
+            const apiServers = api.getServers()
+            apiServers.should.be.eql(expected)
+            done()
+        })
+    })
+
+
+    it('#getServers - v3.0', done => {
         const oasFile = path.resolve(oasBasePath, 'v3.0/petstore.yaml')
         const expected = [{ protocol: 'http', hostName: 'petstore.swagger.io', port: 80, basePath: '/v1' }]
         loadOas(oasFile, oasConfig).then(api => {
@@ -107,10 +126,28 @@ describe('oas', () => {
         })
     })
 
+    it('#getStaticEndpoints() - from combined with options', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/combined/api.yml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const staticEndpoints = api.getStaticEndpoints({})
+            staticEndpoints.should.be.eql(v2CombinedStaticEndpoints)
+            done()
+        })
+    })
+
     it('#getNonStaticEndpoints() - from combined', done => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/combined/api.yml')
         loadOas(oasFile, oasConfig).then(api => {
             const nonStaticEndpoints = api.getNonStaticEndpoints()
+            nonStaticEndpoints.should.be.eql(removeExamples(v2CombinedNonStaticEndpoints))
+            done()
+        })
+    })
+
+    it('#getNonStaticEndpoints() - from combined with options', done => {
+        const oasFile = path.resolve(oasBasePath, 'v2.0/combined/api.yml')
+        loadOas(oasFile, oasConfig).then(api => {
+            const nonStaticEndpoints = api.getNonStaticEndpoints({})
             nonStaticEndpoints.should.be.eql(removeExamples(v2CombinedNonStaticEndpoints))
             done()
         })
@@ -138,7 +175,6 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v2.0/yaml/api-with-examples.yaml')
         loadOas(oasFile, oasConfig).then(api => {
             const endpoints = api.getEndpoints({ includeExamples: true })
-            //console.log(JSON.stringify(endpoints, null, 2))
             endpoints.should.be.eql(v2ApiWithExamplesEndpoints)
             done()
         })
@@ -148,19 +184,8 @@ describe('oas', () => {
         const oasFile = path.resolve(oasBasePath, 'v3.0/api-with-examples.yaml')
         loadOas(oasFile, oasConfig).then(api => {
             const endpoints = api.getEndpoints({ includeExamples: true })
-            //console.log(JSON.stringify(endpoints, null, 2))
             endpoints.should.be.eql(v3ApiWithExamplesEndpoints)
             done()
         })
     })
-    /*
-    it('#getEndpoints - from v3.0 with examples - include examples', done => {
-        const oasFile = path.resolve(oasBasePath, '/home/tombenke/sandbox/easer/rest-api/api.yml')
-        loadOas(oasFile, oasConfig).then(api => {
-            const endpoints = api.getEndpoints({ includeExamples: true })
-            console.log(JSON.stringify(endpoints, null, 2))
-            done()
-        })
-    })
-    */
 })

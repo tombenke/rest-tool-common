@@ -5,7 +5,7 @@
         "method": "get",
         "operationId": "listVersionsv2",
         "consumes": [],
-        "produces": [],
+        "produces": ["application/json"],
         "responses": {
             "200": {
                 "status": "200",
@@ -64,7 +64,7 @@
         "method": "get",
         "operationId": "getVersionDetailsv2",
         "consumes": [],
-        "produces": [],
+        "produces": ["application/json"],
         "responses": {
             "200": {
                 "status": "200",
