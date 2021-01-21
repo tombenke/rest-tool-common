@@ -13,7 +13,7 @@ const schemaBasePath = __dirname + '/../schemas/'
  * @param  {Object} testCase  The testCase object to validate
  * @return {Boolean}          true if successfully validated, false otherwise
  */
-const validateTestCase = function(testCase) {
+const validateTestCase = function (testCase) {
     // Validate service
     testCase.should.have.property('service')
     testCase.service.should.be.instanceof(Object)
@@ -35,20 +35,20 @@ const validateTestCase = function(testCase) {
     return true
 }
 
-describe('services', function() {
-    it('#load() - with default services path', function(done) {
+describe('services', function () {
+    it('#load() - with default services path', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             done()
         }
     })
 
-    it('#load() - with explicit services path', function(done) {
+    it('#load() - with explicit services path', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures/services')) != null) {
             done()
         }
     })
 
-    it('#getServices() - service descriptors are valid', function(done) {
+    it('#getServices() - service descriptors are valid', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             let allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -65,13 +65,13 @@ describe('services', function() {
         }
     })
 
-    it('#getAllTestCases()', function(done) {
+    it('#getAllTestCases()', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allTestCases = services.getAllTestCases()
 
             // Validate each test-cases
             allTestCases.should.be.instanceof(Array)
-            allTestCases.forEach(function(testCase) {
+            allTestCases.forEach(function (testCase) {
                 validateTestCase(testCase)
             })
 
@@ -79,7 +79,7 @@ describe('services', function() {
         }
     })
 
-    it('#testNoTestCases()', function(done) {
+    it('#testNoTestCases()', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             const allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -109,7 +109,7 @@ describe('services', function() {
         }
     })
 
-    it('#getMockRequestBody()', function(done) {
+    it('#getMockRequestBody()', function (done) {
         const expectedResult = {
             id: 1,
             name: 'John Doe',
@@ -124,7 +124,7 @@ describe('services', function() {
         }
     })
 
-    it('#getMockResponseBody()', function(done) {
+    it('#getMockResponseBody()', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -135,7 +135,7 @@ describe('services', function() {
         }
     })
 
-    it('#getImplementation()', function(done) {
+    it('#getImplementation()', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -144,7 +144,7 @@ describe('services', function() {
         }
     })
 
-    it('#getRequestHeaders()', function(done) {
+    it('#getRequestHeaders()', function (done) {
         const expectedResult = [
             {
                 Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
@@ -162,7 +162,7 @@ describe('services', function() {
         }
     })
 
-    it('#getResponseHeaders()', function(done) {
+    it('#getResponseHeaders()', function (done) {
         const expectedResult = [
             {
                 'Content-Type': 'application/json'
@@ -183,7 +183,7 @@ describe('services', function() {
         }
     })
 
-    it('#testDefaults()', function(done) {
+    it('#testDefaults()', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             var allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -208,7 +208,7 @@ describe('services', function() {
                             method.request.cookies.should.be.instanceOf(Array)
 
                             method.testCases.should.be.instanceOf(Array)
-                            method.testCases.forEach(function(testCase) {
+                            method.testCases.forEach(function (testCase) {
                                 testCase.request.should.exist
                                 testCase.request.should.be.instanceOf(Object)
                                 testCase.request.headers.should.be.instanceOf(Array)
@@ -229,7 +229,7 @@ describe('services', function() {
         }
     })
 
-    it('#testAliases()', function(done) {
+    it('#testAliases()', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             const allServices = services.getServices()
             allServices.should.be.instanceof(Object)
@@ -252,13 +252,13 @@ describe('services', function() {
         }
     })
 
-    it('#getAllStaticEndpoints()', function(done) {
+    it('#getAllStaticEndpoints()', function (done) {
         if (services.load(path.resolve(__dirname, 'fixtures'), 'services') != null) {
             const allServices = services.getServices()
             allServices.should.be.instanceof(Object)
             const statics = services.getAllStaticEndpoints()
-            _.map(statics, staticDesc => {
-                _.map(['name', 'description', 'uriTemplate', 'contentPath', 'config'], prop => {
+            _.map(statics, (staticDesc) => {
+                _.map(['name', 'description', 'uriTemplate', 'contentPath', 'config'], (prop) => {
                     staticDesc.should.have.property(prop)
                 })
             })

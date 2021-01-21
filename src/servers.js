@@ -8,7 +8,7 @@ const defaultServer = {
     basePath: '/'
 }
 
-export const getSwaggerServers = oasApi => {
+export const getSwaggerServers = (oasApi) => {
     const { host, port } = parseSwaggerHost(_.get(oasApi, 'host', defaultServer.hostName))
     return flattenServerProtocols([
         {
@@ -20,14 +20,14 @@ export const getSwaggerServers = oasApi => {
     ])
 }
 
-export const parseSwaggerHost = hostStr => {
+export const parseSwaggerHost = (hostStr) => {
     const [host, port] = hostStr.split(':')
     return { host: host, port: port ? port : 80 }
 }
 
-export const flattenServerProtocols = servers =>
-    _.flatMap(servers, server =>
-        _.map(server.protocols, protocol => ({
+export const flattenServerProtocols = (servers) =>
+    _.flatMap(servers, (server) =>
+        _.map(server.protocols, (protocol) => ({
             protocol: protocol,
             port: server.port,
             hostName: server.hostName,
@@ -35,17 +35,17 @@ export const flattenServerProtocols = servers =>
         }))
     )
 
-export const getOpenApiServers = oasApi =>
+export const getOpenApiServers = (oasApi) =>
     _.map(
         _.get(oasApi, 'servers', [
             {
                 url: `${defaultServer.protocol}://${defaultServer.hostName}:${defaultServer.port}${defaultServer.basePath}`
             }
         ]),
-        server => getServerDetails(server)
+        (server) => getServerDetails(server)
     )
 
-export const getServerDetails = server => {
+export const getServerDetails = (server) => {
     const { protocol, hostname, port, path } = url.parse(server.url)
     return {
         protocol: protocol.replace(':', ''),

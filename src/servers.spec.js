@@ -3,7 +3,7 @@ import { getSwaggerServers, getOpenApiServers } from './servers'
 import { oasModels } from './fixtures/'
 
 describe('servers', () => {
-    const testGetSwaggerServers = testCase => {
+    const testGetSwaggerServers = (testCase) => {
         const oasModel = testCase.config
         const expected = testCase.expected
 
@@ -12,7 +12,7 @@ describe('servers', () => {
         return
     }
 
-    const testGetOpenApiServers = testCase => {
+    const testGetOpenApiServers = (testCase) => {
         const oasModel = testCase.config
         const expected = testCase.expected
 
@@ -21,37 +21,37 @@ describe('servers', () => {
         return
     }
 
-    it('#getSwaggerServers - none', done => {
+    it('#getSwaggerServers - none', (done) => {
         testGetSwaggerServers(oasModels.v2.none)
         done()
     })
 
-    it('#getSwaggerServers - plain', done => {
+    it('#getSwaggerServers - plain', (done) => {
         testGetSwaggerServers(oasModels.v2.plain)
         done()
     })
 
-    it('#getSwaggerServers - withPort', done => {
+    it('#getSwaggerServers - withPort', (done) => {
         testGetSwaggerServers(oasModels.v2.withPort)
         done()
     })
 
-    it('#getSwaggerServers - withPortandSchemas', done => {
+    it('#getSwaggerServers - withPortandSchemas', (done) => {
         testGetSwaggerServers(oasModels.v2.withPortAndSchemas)
         done()
     })
 
-    it('#getOpenApiServers - none', done => {
+    it('#getOpenApiServers - none', (done) => {
         testGetOpenApiServers(oasModels.v3.none)
         done()
     })
 
-    it('#getOpenApiServers - plain', done => {
+    it('#getOpenApiServers - plain', (done) => {
         testGetOpenApiServers(oasModels.v3.plain)
         done()
     })
 
-    it('#getOpenApiServers - plainWithPort', done => {
+    it('#getOpenApiServers - plainWithPort', (done) => {
         testGetOpenApiServers(oasModels.v3.plainWithPort)
         done()
     })

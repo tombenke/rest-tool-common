@@ -25,8 +25,8 @@ import { getSwaggerServers, getOpenApiServers, defaultServer } from './servers'
  */
 export const loadOas = (oasFile, oasOptions = {}) =>
     SwaggerParser.validate(oasFile, oasOptions)
-        .then(api => {
-            const endpointOptions = options =>
+        .then((api) => {
+            const endpointOptions = (options) =>
                 _.merge(
                     {
                         includeExamples: false
@@ -95,17 +95,17 @@ export const loadOas = (oasFile, oasOptions = {}) =>
                 getNonStaticEndpoints: (options = {}) => getNonStaticEndpoints(api, endpointOptions(options))
             }
         })
-        .catch(err => {
+        .catch((err) => {
             return Promise.reject(err)
         })
 
-export const getServers = oasApi =>
+export const getServers = (oasApi) =>
     isSwagger(oasApi) ? getSwaggerServers(oasApi) : isOpenApi(oasApi) ? getOpenApiServers(oasApi) : [defaultServer]
 
 export const getStaticEndpoints = (oasApi, options) =>
-    _.filter(getEndpoints(oasApi, options), endpoint => _.has(endpoint, 'static'))
+    _.filter(getEndpoints(oasApi, options), (endpoint) => _.has(endpoint, 'static'))
 export const getNonStaticEndpoints = (oasApi, options) =>
-    _.filter(getEndpoints(oasApi, options), endpoint => !_.has(endpoint, 'static'))
+    _.filter(getEndpoints(oasApi, options), (endpoint) => !_.has(endpoint, 'static'))
 
 export const getEndpoints = (oasApi, options) =>
     isSwagger(oasApi)
@@ -114,9 +114,9 @@ export const getEndpoints = (oasApi, options) =>
         ? getAllEndpoints(oasApi, openApiEndpointExtractor(options))
         : []
 
-export const isSwagger = oasApi => _.get(oasApi, 'swagger', '').match(/^2\.0.*/)
+export const isSwagger = (oasApi) => _.get(oasApi, 'swagger', '').match(/^2\.0.*/)
 
-export const isOpenApi = oasApi => _.get(oasApi, 'openapi', '').match(/^3\.0.*/)
+export const isOpenApi = (oasApi) => _.get(oasApi, 'openapi', '').match(/^3\.0.*/)
 
 export const getAllEndpoints = (swaggerApi, responseExtractor) =>
     _.chain(
@@ -128,8 +128,8 @@ export const getAllEndpoints = (swaggerApi, responseExtractor) =>
             }))
         )
     )
-        .flatMap(path =>
-            _.flatMap(methodNames, methodName =>
+        .flatMap((path) =>
+            _.flatMap(methodNames, (methodName) =>
                 _.get(path, methodName, null)
                     ? [
                           {
@@ -142,7 +142,7 @@ export const getAllEndpoints = (swaggerApi, responseExtractor) =>
                     : []
             )
         )
-        .map(endpoint =>
+        .map((endpoint) =>
             _.has(endpoint, 'x-static')
                 ? makeStaticEndpoint(swaggerApi, endpoint, responseExtractor)
                 : makeOperationEndpoint(swaggerApi, endpoint, responseExtractor)
@@ -164,17 +164,18 @@ export const makeOperationEndpoint = (api, endpoint, responseExtractor) => {
         operationId: _.get(endpoint, 'operationId', null),
         consumes: _.get(endpoint, 'consumes', _.get(api, 'consumes', [])),
         produces: _.merge(_.get(endpoint, 'produces', _.get(api, 'produces', [])), responseMediaTypes),
-        responses: _.mapValues(responses, response => _.omit(response, ['content']))
+        responses: _.mapValues(responses, (response) => _.omit(response, ['content']))
     }
 }
 
-export const collectResponseMediaTypes = responses => _.uniq(_.flatMap(responses, response => _.keys(response.content)))
+export const collectResponseMediaTypes = (responses) =>
+    _.uniq(_.flatMap(responses, (response) => _.keys(response.content)))
 
-export const makeJsonicFriendly = uri => uri.replace(/\{/g, ':').replace(/\}/g, '')
+export const makeJsonicFriendly = (uri) => uri.replace(/\{/g, ':').replace(/\}/g, '')
 
 export const methodNames = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch']
 
-export const swaggerEndpointExtractor = options => (api, endpoint) =>
+export const swaggerEndpointExtractor = (options) => (api, endpoint) =>
     _.chain(
         _.values(
             _.mapValues(endpoint.responses, (v, k, o) => ({
@@ -183,14 +184,14 @@ export const swaggerEndpointExtractor = options => (api, endpoint) =>
                 examples: _.mapValues(_.get(v, 'examples', {}), (v, k, o) => ({ noname: { mimeType: k, value: v } }))
             }))
         )
-            .map(endpoint => (options.includeExamples ? endpoint : _.omit(endpoint, ['examples'])))
+            .map((endpoint) => (options.includeExamples ? endpoint : _.omit(endpoint, ['examples'])))
             .reduce((accu, v, k) => {
                 accu[v.status] = v
                 return accu
             }, {})
     ).value()
 
-export const openApiEndpointExtractor = options => (api, endpoint) =>
+export const openApiEndpointExtractor = (options) => (api, endpoint) =>
     _.chain(
         _.values(
             _.mapValues(endpoint.responses, (v, k, o) => ({
@@ -200,7 +201,7 @@ export const openApiEndpointExtractor = options => (api, endpoint) =>
                 examples: getExamplesFromV3Content(_.get(v, 'content', {}))
             }))
         )
-            .map(response => (options.includeExamples ? response : _.omit(response, ['examples'])))
+            .map((response) => (options.includeExamples ? response : _.omit(response, ['examples'])))
             .reduce((accu, v, k) => {
                 accu[v.status] = v
                 return accu
