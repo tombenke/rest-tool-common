@@ -35,7 +35,7 @@ tasks:
   lint:
     desc: Run linter
     cmds:
-        - echo "TODO: npm run lint"
+        - npm run lint
 
   build:
     desc: Build

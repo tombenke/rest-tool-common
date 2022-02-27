@@ -33,7 +33,6 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
     "babel-plugin-transform-es2015-block-scoping": "^6.26.0",
     "babel-plugin-transform-es2015-parameters": "^6.24.1",
@@ -46,6 +45,7 @@
     "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.10.0",
+    "eslint-plugin-react": "^7.29.2",
     "expect": "^27.5.1",
     "istanbul": "1.1.0-alpha.1",
     "jsdoc": "^3.6.7",
