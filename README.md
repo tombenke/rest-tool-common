@@ -3,8 +3,6 @@ Common modules for the rest-tool
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 [![npm version][npm-badge]][npm-url]
-[![Build Status][travis-badge]][travis-url]
-[![Coveralls][BadgeCoveralls]][Coveralls]
 
 This module provides functions to load REST API descriptor files and help the implementation of both servers and clients that communicates through the API.
 
@@ -46,8 +44,4 @@ To learn more on how to setup the project, and how to use the tool visit the
 
 [npm-badge]: https://badge.fury.io/js/rest-tool-common.svg
 [npm-url]: https://badge.fury.io/js/rest-tool-common
-[travis-badge]: https://api.travis-ci.org/tombenke/rest-tool-common.svg
-[travis-url]: https://travis-ci.org/tombenke/rest-tool-common
-[Coveralls]: https://coveralls.io/github/tombenke/rest-tool-common?branch=master
-[BadgeCoveralls]: https://coveralls.io/repos/github/tombenke/rest-tool-common/badge.svg?branch=master
 
