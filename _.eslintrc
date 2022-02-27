@@ -7,6 +7,9 @@
         "mocha": true,
         "browser": true
     },
+    "globals": {
+        "should": true
+    },
     "rules": {
         "no-prototype-builtins": 0,
         "no-trailing-spaces": ["error", { "skipBlankLines": true }],
@@ -17,7 +20,7 @@
     },
     "parserOptions": {
         "sourceType": "module",
-        "ecmaVersion": 6,
+        "ecmaVersion": 2018,
         "ecmaFeatures": {
             "jsx": true,
             "modules": true,

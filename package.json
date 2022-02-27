@@ -26,15 +26,17 @@
   "bin": {},
   "main": "dist/index.js",
   "dependencies": {
-    "datafile": "^3.4.3",
+    "datafile": "^3.4.5",
     "lodash": "^4.17.21",
-    "swagger-parser": "^10.0.2"
+    "swagger-parser": "^10.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.2.2",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-transform-es2015-block-scoping": "^6.26.0",
+    "babel-plugin-transform-es2015-parameters": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-polyfill": "6.26.0",
     "babel-preset-env": "^1.7.0",
@@ -43,13 +45,13 @@
     "babel-register": "^6.26.0",
     "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "^7.30.0",
-    "expect": "^27.0.6",
+    "eslint": "^8.10.0",
+    "expect": "^27.5.1",
     "istanbul": "1.1.0-alpha.1",
     "jsdoc": "^3.6.7",
     "mocha": "^9.0.2",
     "mocha-lcov-reporter": "^1.2.0",
-    "prettier": "^2.3.2",
+    "prettier": "^2.5.1",
     "should": "13.2.3"
   },
   "prettier": {
