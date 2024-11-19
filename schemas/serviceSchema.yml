@@ -132,7 +132,7 @@ definitions:
                 type: string
             description:
                 description: Details and notes about the response
-                type: [string, "null"]
+                type: string
             validationSchema:
                 description: |
                     The JSON-schema to validate the content of the response

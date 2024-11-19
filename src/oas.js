@@ -111,8 +111,8 @@ export const getEndpoints = (oasApi, options) =>
     isSwagger(oasApi)
         ? getAllEndpoints(oasApi, swaggerEndpointExtractor(options))
         : isOpenApi(oasApi)
-        ? getAllEndpoints(oasApi, openApiEndpointExtractor(options))
-        : []
+          ? getAllEndpoints(oasApi, openApiEndpointExtractor(options))
+          : []
 
 export const isSwagger = (oasApi) => _.get(oasApi, 'swagger', '').match(/^2\.0.*/)
 
@@ -213,10 +213,10 @@ export const getExamplesFromV3Content = (content, mimeType) =>
         _.has(mimeTypeValue, 'example')
             ? { noname: { mimeType: mimeType, value: mimeTypeValue.example } } // Return with example
             : _.has(mimeTypeValue, 'examples')
-            ? _.mapValues(mimeTypeValue.examples, (v, k, o) => ({
-                  // Return with examples
-                  mimeType: mimeType,
-                  value: _.has(v, 'externalValue') ? v.externalValue : _.get(v, 'value', null)
-              }))
-            : {}
+              ? _.mapValues(mimeTypeValue.examples, (v, k, o) => ({
+                    // Return with examples
+                    mimeType: mimeType,
+                    value: _.has(v, 'externalValue') ? v.externalValue : _.get(v, 'value', null)
+                }))
+              : {}
     ) // Neither examples nor example are defined
